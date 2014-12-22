@@ -1,0 +1,533 @@
+ï»¿function ValidatorEnableFlightStatus(ddlSearchBy, reqFlightNumber, regexFlightNumber, reqOrigin, reqDestination, reqAirport, valEar, valLatest, cmpEarLatest, reqFlightDate,
+txtFlightNumber, ddlOrigin, ddlDetination, ddlAirport, ddlEarliest, ddlLatest, ddlDate,sameDestination, isTab)
+{ 
+    var searchBy =document.getElementById(ddlSearchBy).value;
+    var flightNumber = document.getElementById(txtFlightNumber).value;
+    var origin = document.getElementById(ddlOrigin).value;
+    var destination = document.getElementById(ddlDetination).value;
+    var airport = document.getElementById(ddlAirport).value;
+    var earliestTime = document.getElementById(ddlEarliest).value;
+    var latestTime = document.getElementById(ddlLatest).value;
+    var date = document.getElementById(ddlDate).value;
+
+    var SubmitStatus = document.getElementById("SubmitStateFlightsStatus");
+    if (SubmitStatus) {
+        SubmitStatus.value = false;
+    }
+    if (date == '' || date == 'Select') {
+        if (isTab == '1') {
+            ShowMessage(reqFlightDate);
+        }
+        else {
+            document.getElementById("fsDvDateMsg").style.display = "";
+            document.getElementById("fsDvDateMsg").innerHTML = reqFlightDate;
+        }
+        return false;
+        
+    }
+    switch(searchBy.toUpperCase())
+    {
+        case "FLIGHT":
+            {
+                if (flightNumber == '') {
+                    if (isTab == '1') {
+                        ShowMessage(reqFlightNumber);
+                    }
+                    else {
+                        document.getElementById("fsDvFlightNoMsg").style.display = "";
+                        document.getElementById("fsDvFlightNoMsg").innerHTML = reqFlightNumber;
+                    }
+                    return false;
+                }
+
+                if (/\D/.test(flightNumber)) {
+                    if (isTab == '1') {
+                        ShowMessage(regexFlightNumber);
+                    }
+                    else {
+                        document.getElementById("fsDvFlightNoMsg").style.display = "";
+                        document.getElementById("fsDvFlightNoMsg").innerHTML = regexFlightNumber;
+                    }
+                    return false;
+                }
+                break;
+            }
+        case "FLIGHTJK":
+            {
+                if (flightNumber == '') {
+                    if (isTab == '1') {
+                        ShowMessage(reqFlightNumber);
+                    }
+                    else {
+                        document.getElementById("fsDvFlightNoMsg").style.display = "";
+                        document.getElementById("fsDvFlightNoMsg").innerHTML = reqFlightNumber;
+                    }
+                    return false;
+                }
+
+                if (/\D/.test(flightNumber)) {
+                    if (isTab == '1') {
+                        ShowMessage(regexFlightNumber);
+                    }
+                    else {
+                        document.getElementById("fsDvFlightNoMsg").style.display = "";
+                        document.getElementById("fsDvFlightNoMsg").innerHTML = regexFlightNumber;
+                    }
+                    return false;
+                }
+                break;
+            }
+        case "ROUTE":
+            {
+                if (origin == '') {
+                    if (isTab == '1') {
+                        ShowMessage(reqOrigin);
+                    }
+                    else {
+                        document.getElementById("fsDvRouteMsg").style.display = "";
+                        document.getElementById("fsDvRouteMsg").innerHTML = reqOrigin;
+                    }
+
+                    return false;
+                }
+                if (destination == '') {
+                    if (isTab == '1') {
+                        ShowMessage(reqDestination);
+                    }
+                    else {
+                        document.getElementById("fsDvDestinationMsg").style.display = "";
+                        document.getElementById("fsDvDestinationMsg").innerHTML = reqDestination;
+                    }
+
+                    return false;
+                }
+
+                if (destination == origin) {
+                    if (isTab == '1') {
+                        ShowMessage(sameDestination);
+                    }
+                    else {
+                        document.getElementById("fsDvDestinationMsg").style.display = "";
+                        document.getElementById("fsDvDestinationMsg").innerHTML = sameDestination;
+                    }
+
+                    return false;
+                }
+                break;
+            }
+
+        case "AIRPORT":
+            {
+                if (airport == '') {
+                    if (isTab == '1') {
+                        ShowMessage(reqAirport);
+                    }
+                    else {
+                        document.getElementById("fsDvAirportSelMsg").style.display = "";
+                        document.getElementById("fsDvAirportSelMsg").innerHTML = reqAirport;
+                    }
+
+                    return false;
+                }
+                if (earliestTime == '') {
+                    if (isTab == '1') {
+                        ShowMessage(valEar);
+                    }
+                    else {
+                        document.getElementById("fsDvEarliestMsg").style.display = "";
+                        document.getElementById("fsDvEarliestMsg").innerHTML = valEar;
+                    }
+
+                    return false;
+                }
+                if (latestTime == '') {
+                    if (isTab == '1') {
+                        ShowMessage(valLatest);
+                    }
+                    else {
+                        document.getElementById("fsDvLatestMsg").style.display = "";
+                        document.getElementById("fsDvLatestMsg").innerHTML = valLatest;
+                    }
+                    return false;
+                }
+                if (parseInt(earliestTime) > parseInt(latestTime)) {
+                    if (parseInt(earliestTime) != 23 && parseInt(latestTime) != 0) {
+                        if (isTab == '1') {
+                            ShowMessage(cmpEarLatest);
+                        }
+                        else {
+                            document.getElementById("fsDvLatestMsg").style.display = "";
+                            document.getElementById("fsDvLatestMsg").innerHTML = cmpEarLatest;
+                        }
+                        return false;
+                    }
+                }
+                break;
+            }
+    }
+
+    if (SubmitStatus) {
+        SubmitStatus.value = true;
+    }
+}
+
+function ValidatorEnableFlightStatus_GL(ddlSearchBy, reqFlightNumber, regexFlightNumber, reqOrigin, reqDestination, reqAirport, valEar, valLatest, cmpEarLatest, reqFlightDate,
+txtFlightNumber, ddlOrigin, ddlDetination, ddlAirport, ddlEarliest, ddlLatest, ddlDate, sameDestination, isTab) {
+    var searchBy = document.getElementById(ddlSearchBy).value;
+    var flightNumber = document.getElementById(txtFlightNumber).value;
+    var origin = document.getElementById(ddlOrigin).value;
+    var destination = document.getElementById(ddlDetination).value;
+    var airport = document.getElementById(ddlAirport).value;
+    var earliestTime = document.getElementById(ddlEarliest).value;
+    var latestTime = document.getElementById(ddlLatest).value;
+    var date = document.getElementById(ddlDate).value;
+    var holdID = [];
+    var holdMsg = [];
+    var holdStatus = true;
+    var SubmitStatus = document.getElementById("SubmitStateFlightsStatus");    
+    if (SubmitStatus) {
+        SubmitStatus.value = false;
+    }    
+    if (date == '' || date == 'Select') {
+        if (isTab == '1') {
+            //            ShowMessage(reqFlightDate);
+            //ShowMessage_GL(reqFlightDate);
+            //ShowMessage_GLID(ddlDate, true);
+            holdID.push("#"+ddlDate);
+            holdMsg.push(reqFlightDate);            
+            
+        }
+        else {
+            document.getElementById("fsDvDateMsg").style.display = "";
+            document.getElementById("fsDvDateMsg").innerHTML = reqFlightDate;
+        }
+        //return false;
+        holdStatus = false;
+        //ShowMessage_GLMulti(holdID, holdMsg);        
+    }
+    else {
+        //ShowMessage_GLID(ddlDate, false);
+        //holdID = [];
+        //holdMsg = [];
+        holdStatus = true;        
+    }
+    console.log(searchBy);    
+    switch (searchBy.toUpperCase()) {
+        case "FLIGHT":
+            {
+                if (flightNumber == '') {
+                    if (isTab == '1') {
+                        //                        ShowMessage(reqFlightNumber);
+                        //ShowMessage_GL(reqFlightNumber);
+                        //ShowMessage_GLID(txtFlightNumber, true);
+                        holdID.push("#"+txtFlightNumber);
+                        holdMsg.push(reqFlightNumber);
+                    }
+                    else {
+                        document.getElementById("fsDvFlightNoMsg").style.display = "";
+                        document.getElementById("fsDvFlightNoMsg").innerHTML = reqFlightNumber;
+                    }
+                    //return false;
+                    holdStatus = false;                   
+                }
+                else {
+                    ShowMessage_GLID(txtFlightNumber, false);
+                    holdStatus = true;
+                }
+
+                if (/\D/.test(flightNumber)) {
+                    if (isTab == '1') {
+                        //                        ShowMessage(regexFlightNumber);
+                        //ShowMessage_GL(regexFlightNumber);
+                        //ShowMessage_GLID(txtFlightNumber, true);
+                        holdID.push("#"+txtFlightNumber);
+                        holdMsg.push(regexFlightNumber);
+                    }
+                    else {
+                        document.getElementById("fsDvFlightNoMsg").style.display = "";
+                        document.getElementById("fsDvFlightNoMsg").innerHTML = regexFlightNumber;
+                    }
+                    //return false;
+                    holdStatus = false;
+                }
+                else {
+                    ShowMessage_GLID(txtFlightNumber, false);
+                    holdStatus = true;
+                }
+                console.log(holdID);
+                console.log(holdMsg);                                
+                break;
+            }
+        case "FLIGHTJK":
+            {
+                if (flightNumber == '') {
+                    if (isTab == '1') {
+                        //                        ShowMessage(reqFlightNumber);
+                        //ShowMessage_GL(reqFlightNumber);
+                        //ShowMessage_GLID(txtFlightNumber, true);
+                        holdID.push("#" + txtFlightNumber);
+                        holdMsg.push(reqFlightNumber);
+                    }
+                    else {
+                        document.getElementById("fsDvFlightNoMsg").style.display = "";
+                        document.getElementById("fsDvFlightNoMsg").innerHTML = reqFlightNumber;
+                    }
+                    //return false;
+                    holdStatus = false;                    
+                }
+                                
+                if (/\D/.test(flightNumber)) {
+                    
+                    if (isTab == '1') {
+                        //                        ShowMessage(regexFlightNumber);
+                        //ShowMessage_GL(regexFlightNumber);
+                        //ShowMessage_GLID(txtFlightNumber, true);
+                        holdID.push("#" + txtFlightNumber);
+                        holdMsg.push(regexFlightNumber);
+                    }
+                    else {
+                        document.getElementById("fsDvFlightNoMsg").style.display = "";
+                        document.getElementById("fsDvFlightNoMsg").innerHTML = regexFlightNumber;
+                    }
+                    //return false;
+                    holdStatus = false;                    
+                }                              
+                break;
+            }
+        case "ROUTE":
+            {
+                if (origin == '') {
+                    if (isTab == '1') {
+                        //                        ShowMessage(reqOrigin);
+                        //ShowMessage_GL(reqOrigin);
+                        //ShowMessage_GLID(ddlOrigin, true);
+                        holdID.push("#" + ddlOrigin);
+                        holdMsg.push(reqOrigin);
+                    }
+                    else {
+                        document.getElementById("fsDvRouteMsg").style.display = "";
+                        document.getElementById("fsDvRouteMsg").innerHTML = reqOrigin;
+                    }
+
+                    //return false;
+                    holdStatus = false;
+                }
+                
+                if (destination == '') {
+                    if (isTab == '1') {
+                        //                        ShowMessage(reqDestination);
+                        //ShowMessage_GL(reqDestination);
+                        //ShowMessage_GLID(ddlDetination, true);
+                        holdID.push("#" + ddlDetination);
+                        holdMsg.push(reqDestination);
+                    }
+                    else {
+                        document.getElementById("fsDvDestinationMsg").style.display = "";
+                        document.getElementById("fsDvDestinationMsg").innerHTML = reqDestination;
+                    }
+
+                    //return false;
+                    holdStatus = false;
+                }
+                
+
+                if (destination == origin) {
+                    if (isTab == '1') {
+                        //                        ShowMessage(sameDestination);
+                        //ShowMessage_GL(sameDestination);
+                        //ShowMessage_GLID(ddlDetination, true);
+                        holdID.push("#"+ddlDetination);
+                        holdMsg.push(sameDestination);
+                    }
+                    else {
+                        document.getElementById("fsDvDestinationMsg").style.display = "";
+                        document.getElementById("fsDvDestinationMsg").innerHTML = sameDestination;
+                    }
+
+                    //return false;
+                    holdStatus = false;                
+                }
+                break;
+            }
+
+        case "AIRPORT":
+            {
+                if (airport == '') {
+                    if (isTab == '1') {
+                        //                        ShowMessage(reqAirport);
+                        //ShowMessage_GL(reqAirport);
+                        //ShowMessage_GLID(ddlAirport, true);
+                        holdID.push("#" + ddlAirport);
+                        holdMsg.push(reqAirport);
+                    }
+                    else {
+                        document.getElementById("fsDvAirportSelMsg").style.display = "";
+                        document.getElementById("fsDvAirportSelMsg").innerHTML = reqAirport;
+                    }
+
+                    //return false;
+                    holdStatus = false;
+                }                
+
+                if (earliestTime == '') {
+                    if (isTab == '1') {
+                        //                        ShowMessage(valEar);
+                        //ShowMessage_GL(valEar);
+                        //ShowMessage_GLID(ddlEarliest, true);
+                        holdID.push("#" + ddlEarliest);
+                        holdMsg.push(valEar);
+                    }
+                    else {
+                        document.getElementById("fsDvEarliestMsg").style.display = "";
+                        document.getElementById("fsDvEarliestMsg").innerHTML = valEar;
+                    }
+
+                    //return false;
+                    holdStatus = false;
+                }                
+
+                if (latestTime == '') {
+                    if (isTab == '1') {
+                        //                        ShowMessage(valLatest);
+                        //ShowMessage_GL(valLatest);
+                        //ShowMessage_GLID(ddlLatest, true);
+                        holdID.push("#" + ddlLatest);
+                        holdMsg.push(valLatest);
+                    }
+                    else {
+                        document.getElementById("fsDvLatestMsg").style.display = "";
+                        document.getElementById("fsDvLatestMsg").innerHTML = valLatest;
+                    }
+                    //return false;
+                    holdStatus = false;
+                }
+                
+
+
+                if (parseInt(earliestTime) > parseInt(latestTime)) {
+                    if (parseInt(earliestTime) != 23 && parseInt(latestTime) != 0) {
+                        if (isTab == '1') {
+                            //                            ShowMessage(cmpEarLatest);
+                            //ShowMessage_GL(cmpEarLatest);
+                            //ShowMessage_GLID(ddlLatest, true);
+                            holdID.push("#"+ddlLatest);
+                            holdMsg.push(cmpEarLatest);
+                        }
+                        else {
+                            document.getElementById("fsDvLatestMsg").style.display = "";
+                            document.getElementById("fsDvLatestMsg").innerHTML = cmpEarLatest;
+                        }
+                        //return false;
+                        holdStatus = false;
+                    }
+                }
+                break;
+            }
+    }
+    if (!holdStatus) {
+        ShowMessage_GLMulti(holdID, holdMsg);
+        return false;
+    }
+    if (SubmitStatus) {
+        SubmitStatus.value = true;
+    }    
+}
+
+function showSearchOptionDiv(getVal) {
+    var searchBy = document.getElementById(getVal).value;
+
+    var dvFlightData = document.getElementById("trFlight");
+    var dvRouteData = document.getElementById("trRoute");
+    var dvAirportData = document.getElementById("trAirport");
+    if (searchBy == "Flight") {
+        dvFlightData.style.display = "";
+        dvRouteData.style.display = "none";
+        dvAirportData.style.display = "none";
+    }
+    if (searchBy == "FlightJK") {
+        dvFlightData.style.display = "";
+        dvRouteData.style.display = "none";
+        dvAirportData.style.display = "none";
+    }
+    else if (searchBy == "Route") {
+        dvFlightData.style.display = "none";
+        dvRouteData.style.display = "";
+        dvAirportData.style.display = "none";
+    }
+    else if (searchBy == "Airport") {
+        dvFlightData.style.display = "none";
+        dvRouteData.style.display = "none";
+        dvAirportData.style.display = "";
+    }
+
+}
+
+function showSearchOptionDiv_GL(getVal) {
+    var searchBy = document.getElementById(getVal).value;
+    var dvFlightData = document.getElementById("trFlight");
+    var dvRouteData = document.getElementById("trRoute");
+    var dvAirportData = document.getElementById("trAirport");
+
+    if (searchBy == "Flight") {
+        dvFlightData.style.display = "";
+        dvRouteData.style.display = "none";
+        $("#trRoute").find("select[id$='ddlOrigin']").removeClass("bRed");
+        $("#trRoute").find("select[id$='ddlDestination']").removeClass("bRed");
+        dvAirportData.style.display = "none";
+        $("#trAirport").find("select[id$='ddlAirportName']").removeClass("bRed");
+        $("select[id$='ddlEarliestTime']").removeClass("bRed");
+        $("select[id$='ddlLatestTime']").removeClass("bRed");        
+        $("#glErr").hide();
+    }
+    if (searchBy == "FlightJK") {
+        dvFlightData.style.display = "";
+        dvRouteData.style.display = "none";
+        $("#trRoute").find("select[id$='ddlOrigin']").removeClass("bRed");
+        $("#trRoute").find("select[id$='ddlDestination']").removeClass("bRed");
+        dvAirportData.style.display = "none";
+        $("#trAirport").find("select[id$='ddlAirportName']").removeClass("bRed");
+        $("select[id$='ddlEarliestTime']").removeClass("bRed");
+        $("select[id$='ddlLatestTime']").removeClass("bRed");
+        $("#glErr").hide();
+    }
+    else if (searchBy == "Route") {
+        dvFlightData.style.display = "none";
+        $("#trFlight").find("input[id$='txtFlightNumber']").removeClass("bRed");
+        dvRouteData.style.display = "";
+        dvAirportData.style.display = "none";
+        $("#trAirport").find("select[id$='ddlAirportName']").removeClass("bRed");
+        $("select[id$='ddlEarliestTime']").removeClass("bRed");
+        $("select[id$='ddlLatestTime']").removeClass("bRed");
+        $("#glErr").hide();
+    }
+    else if (searchBy == "Airport") {
+        dvFlightData.style.display = "none";
+        $("#trFlight").find("input[id$='txtFlightNumber']").removeClass("bRed");
+        dvRouteData.style.display = "none";
+        $("#trRoute").find("select[id$='ddlOrigin']").removeClass("bRed");
+        $("#trRoute").find("select[id$='ddlDestination']").removeClass("bRed");
+        dvAirportData.style.display = "";
+        $("#glErr").hide();
+    }
+
+}
+function hideFSDvMessage(fieldID,dvMessageId)
+{
+    var commonField = document.getElementById(fieldID.id).value;
+    var dvMessageId = document.getElementById(dvMessageId);
+
+
+   if(commonField!='')
+   dvMessageId.style.display="none";
+
+}
+×b¯ƒÂ      TUmùTUl";:TV¼Ú   5:http://static.jetairways.com/Scripts/flightStatus.js request-method GET response-head HTTP/1.1 200 OK
+Content-Type: application/javascript
+Last-Modified: Mon, 04 Aug 2014 09:44:16 GMT
+Accept-Ranges: bytes
+Server: Microsoft-IIS/8.5
+X-Powered-By: ASP.NET
+Content-Length: 21987
+Cache-Control: max-age=86400
+Date: Sat, 01 Nov 2014 23:23:06 GMT
+ uncompressed-len 0   Uã

@@ -1,0 +1,1313 @@
+ï»¿
+// Setup Auto Suggest Box Start
+var oriBoxControl;
+		
+		function SetupAutoSuggestBox(ddlCity,txtOrigin,fromShowTable,fromBoxCloseButton,imgOriPlus,fromCityBox,PortCodes,PortNames)
+		{
+		 if(PortCodes != "undefined" || PortCodes!=undefined)
+		 {
+			var fromPortIds = new Object();
+			fromPortIds.portSelected = fsPre + ddlCity;
+			fromPortIds.inputBox = fsPre + txtOrigin;
+			fromPortIds.showTable = fsPre + fromShowTable;
+			fromPortIds.closeButton = fsPre + fromBoxCloseButton;
+			fromPortIds.toggleButton = fsPre + imgOriPlus;
+			fromPortIds.selectionBoxDiv = fsPre + fromCityBox;
+		
+   var Countries = InitCountries("", "");
+			var Ports = InitPorts(PortCodes, PortNames, "", Countries);
+
+			var pageDataContainer = new DataContainer(Countries, Ports);
+
+					
+			oriBoxControl = new PortBoxControl(fromPortIds, "", "img_ico_predictive", 
+				"img_ico_predictive_minus", "Form1", pageDataContainer, true);
+
+			oriBoxControl.oppPortBoxControl = oriBoxControl;
+			var originDestinationHandler = new OriginDestinationHandler(oriBoxControl, oriBoxControl, pageDataContainer);
+
+			//window.onresize = <%=UCpreFix%>positionPortDropDowns;
+			////new code added
+			
+			if (ddlCity != null && ddlCity != "" && ddlCity != "undefined") {			    
+			    var strSelectedAirport = document.getElementById(ddlCity).value;
+			    if (strSelectedAirport != "") {			        
+			        var indexNumber = PortCodes.indexOf(strSelectedAirport);			        
+			        if (indexNumber > -1) {			            
+			            document.getElementById(txtOrigin).value = PortNames[indexNumber];
+			        }
+			       }
+			}
+			///End of the code               
+
+  }
+
+		}
+
+// Setup Auto Suggest Box End
+//For Gadgets 
+		function SetupAutoSuggestBoxGadget(ddlCity,txtOrigin,fromShowTable,fromBoxCloseButton,imgOriPlus,fromCityBox,PortCodes,PortNames)
+		{
+		 if(PortCodes != "undefined" || PortCodes!=undefined)
+		 {
+			var fromPortIds = new Object();
+			fromPortIds.portSelected = fsPre + ddlCity;
+			fromPortIds.inputBox = fsPre + txtOrigin;
+			fromPortIds.showTable = fsPre + fromShowTable;
+			fromPortIds.closeButton = fsPre + fromBoxCloseButton;
+			fromPortIds.toggleButton = fsPre + imgOriPlus;
+			fromPortIds.selectionBoxDiv = fsPre + fromCityBox;
+		
+   var Countries = InitCountries("", "");
+			var Ports = InitPorts(PortCodes, PortNames, "", Countries);
+
+			var pageDataContainer = new DataContainer(Countries, Ports);
+
+					
+			oriBoxControl = new PortBoxControl(fromPortIds, "", "img_ico_predictive_gadget", 
+				"img_ico_predictive_minus_gadget", "Form1", pageDataContainer, true);
+
+			oriBoxControl.oppPortBoxControl = oriBoxControl;
+			var originDestinationHandler = new OriginDestinationHandler(oriBoxControl, oriBoxControl, pageDataContainer);
+
+			//window.onresize = <%=UCpreFix%>positionPortDropDowns;
+			////new code added
+			
+			if (ddlCity != null && ddlCity != "" && ddlCity != "undefined") {			    
+			    var strSelectedAirport = document.getElementById(ddlCity).value;
+			    if (strSelectedAirport != "") {			        
+			        var indexNumber = PortCodes.indexOf(strSelectedAirport);			        
+			        if (indexNumber > -1) {			            
+			            document.getElementById(txtOrigin).value = PortNames[indexNumber];
+			        }
+			       }
+			}
+			///End of the code               
+
+  }
+
+		}
+
+
+// Current Menu Active Start
+function menuSelected(menuVal)
+{
+ if(menuVal != undefined) {
+
+     if (menuVal == "ProductAndServices")
+         menuVal = "ProductandServices";
+   
+     if (menuVal == "Baggage")
+         menuVal = "PlanYourTravel";
+     
+     if (menuVal == "PressReleases")
+        menuVal = "AboutUs";
+    
+        
+         if (document.getElementById(menuVal))
+             document.getElementById(menuVal).className = "selected2";
+    
+ }
+}
+// Current Menu Active End
+
+//Opening a new window Starts Here
+var win= null;
+function NewWindow(mypage,myname,w,h,scroll,resize){
+  var winl = (window.screen.width-w)/2;
+  var wint = (window.screen.height-h)/2;
+  var settings  ='height='+h+',';
+      settings +='width='+w+',';
+      settings +='top='+wint+',';
+      settings +='left='+winl+',';
+      settings +='scrollbars='+scroll+',';
+      settings +='resizable='+resize+'';
+  win=window.open(mypage,myname,settings);
+  if(parseInt(navigator.appVersion) >= 4){win.window.focus();}
+}
+//Opening a new window Ends Here
+
+// Updating the blank Text box value with image Start
+function showhidedefaultvalue(code) {
+
+
+ var fieldSet = document.getElementById(code.id);
+
+ if (fieldSet.value == "") {
+  if (fieldSet.className.indexOf("Blank") == "-1")
+   fieldSet.className = fieldSet.className + "Blank";
+   
+  else
+   fieldSet.className = fieldSet.className.replace("Blank", "")
+  
+ }
+
+}
+// Updating the blank Text box value with image End
+function inputimgfield()
+{
+if(document.getElementById("MainContent"))
+var Content=document.getElementById("MainContent");
+else
+var Content=document.getElementById("InnerContent");
+
+if(Content!=null){
+
+for(i=0; i<Content.getElementsByTagName("input").length; i++)
+    {
+        if(Content.getElementsByTagName("input")[i].getAttribute('type')=="text")
+        {
+            if (Content.getElementsByTagName("input")[i].value!="")
+            {
+
+            Content.getElementsByTagName("input")[i].className ="CommonTxtBox";
+
+            }
+        }
+    }
+
+
+  }
+}
+    
+setTimeout("inputimgfield()",1000);    
+
+
+// Updating the blank Text box value with image End
+/*
+function showDiv(elemShow)
+{
+    document.getElementById(elemShow).style.display = 'block';
+    document.getElementById(elemShow).style.visibility = 'visible';
+}
+function hideDiv(elemHide)
+{
+    document.getElementById(elemHide).style.display = 'none';
+    document.getElementById(elemHide).style.visibility = 'disable';
+}
+*/
+
+// Tooltip Start
+function fndCrd(e,id,element){
+var tempX = element.offsetLeft;
+var tempY = element.offsetTop;
+
+while(element.offsetParent){
+tempX=tempX+element.offsetParent.offsetLeft;
+tempY=tempY+element.offsetParent.offsetTop;
+if(element==document.getElementsByTagName('body')[0]){break}
+else{element=element.offsetParent;}
+}
+
+var btnX=element.offsetLeft + 50;
+var btnY=element.offsetTop + 5 ;
+var popup=document.getElementById(id);
+popup.style.display='none';
+popup.style.left=(tempX+btnX)+'px';
+popup.style.top=(tempY+btnY)+'px';
+popup.style.display='block';
+} 
+
+
+
+function popupDiv(e, id, frameid, element) {
+
+//var popupSpecialfare = document.getElementById("popupSpecialfare");
+var elementCopy = element;
+var tempX = element.offsetLeft;
+var tempY = element.offsetTop;
+
+//while(element.offsetParent){
+//tempX=tempX+element.offsetParent.offsetLeft;
+//tempY=tempY+element.offsetParent.offsetTop;
+//if(element==document.getElementsByTagName('body')[0]){break}
+//else{element=element.offsetParent;}
+//}
+
+var btnX=element.offsetLeft;
+var btnY=element.offsetTop ;
+var popup = document.getElementById(id);
+document.getElementById(frameid).style.display = "";
+popup.style.display='none';
+popup.style.display = 'block';
+getElementPosLeft = e.clientX+elementCopy.clientWidth;
+//alert(getElementPosLeft);
+//popup.style.left=getElementPosLeft+40+'px';
+//popup.style.top=(e.clientY)-parseInt(popup.clientHeight/2)+'px';
+var st = Math.max(document.body.scrollTop,document.documentElement.scrollTop);
+popup.style.left = e.clientX + element.offsetWidth - 10 + 'px';
+popup.style.top = e.clientY + st - 80 +"px"; // - obj.offsetHeight/2 + st + 'px';
+
+if(document.getElementById("TooltipYellowArrow"))
+{
+setFrameLeftPos = popup.offsetLeft+17;
+setFrameTopPos = popup.offsetTop+3;
+setFrameWidth = parseInt(popup.clientWidth)- 17;
+setFrameHeight = parseInt(popup.clientHeight) - 5;
+}
+else
+{
+setFrameLeftPos = e.clientX + element.offsetWidth + 10;
+setFrameTopPos = e.clientY + st - 76; // - obj.offsetHeight/2 + st + 'px';
+setFrameWidth = parseInt(popup.clientWidth)- 24;
+setFrameHeight = parseInt(popup.clientHeight) - 7;
+}
+
+if(navigator.appName=="Microsoft Internet Explorer" && navigator.appVersion <= "6")
+{
+//document.getElementById(frameid).style.border="1px solid #ff0000";
+document.getElementById(frameid).style.left = setFrameLeftPos + 'px';
+document.getElementById(frameid).style.top = setFrameTopPos + 'px';
+document.getElementById(frameid).style.width = setFrameWidth + "px";
+document.getElementById(frameid).style.height = setFrameHeight + "px";
+}
+}
+
+function toggleDiv(divid, iframeid)
+{
+
+//var popupSpecialfare = document.getElementById("popupSpecialfare");
+        if(iframeid == null)
+        {
+            if(document.getElementById(divid).style.display == 'none')
+            {
+                document.getElementById(divid).style.display = 'block';
+                popupSpecialfare2.style.display = '';
+            }
+            else
+            {
+                document.getElementById(divid).style.display = 'none';
+                popupSpecialfare2.style.display = 'none';
+            } 
+        }
+        else if(document.getElementById(divid).style.display == 'none')
+        {
+        
+            document.getElementById(divid).style.display = 'block';
+            document.getElementById(iframeid).style.display = 'block';
+        }
+        else
+        {
+            document.getElementById(divid).style.display = 'none';
+            document.getElementById(iframeid).style.display = 'none';
+            
+        } 
+
+} 
+
+function popupDivTop(e, id, frameid, element){
+
+var tempX = element.offsetLeft;
+var tempY = element.offsetTop;
+
+while(element.offsetParent){
+tempX=tempX+element.offsetParent.offsetLeft;
+tempY=tempY+element.offsetParent.offsetTop;
+if(element==document.getElementsByTagName('body')[0]){break}
+else{element=element.offsetParent;}
+}
+    
+var btnX=element.offsetLeft -40;
+var btnY=element.offsetTop+38 ;
+var popup = document.getElementById(id);
+document.getElementById(frameid).style.display = "";
+popup.style.display='none';
+popup.style.left=(tempX+btnX)+'px';
+popup.style.top=(tempY+btnY)+'px';
+popup.style.display = 'block';
+document.getElementById(frameid).style.left = (tempX+btnX)-40 +'px';
+document.getElementById(frameid).style.top = (tempY+btnY)-8+'px';
+document.getElementById(frameid).style.width = parseInt(popup.clientWidth)-19 + "px"
+document.getElementById(frameid).style.height = parseInt(popup.clientHeight)-5 + "px"
+
+}
+
+function popupDivLeft(e, id, frameid, element) {
+
+var tempX = element.offsetLeft;
+var tempY = element.offsetTop;
+
+while(element.offsetParent){
+tempX=tempX+element.offsetParent.offsetLeft;
+tempY=tempY+element.offsetParent.offsetTop;
+if(element==document.getElementsByTagName('body')[0]){break}
+else{element=element.offsetParent;}
+}
+    
+var btnX=element.offsetLeft-230;
+var btnY=element.offsetTop - 56 ;
+var popup = document.getElementById(id);
+document.getElementById(frameid).style.display = "";
+popup.style.display='none';
+popup.style.left=(tempX+btnX)+'px';
+popup.style.top=(tempY+btnY)+'px';
+popup.style.display = 'block';
+document.getElementById(frameid).style.left = (tempX+btnX)-40 +'px';
+document.getElementById(frameid).style.top = (tempY+btnY)-8+'px';
+document.getElementById(frameid).style.width = parseInt(popup.clientWidth)-19 + "px"
+document.getElementById(frameid).style.height = parseInt(popup.clientHeight)-5 + "px"
+}
+
+// Tooltip End 
+
+function OurNetworkTblWidth(){
+if (document.getElementById('OurNetwork'))
+{
+	widthoftable = document.getElementById('OurNetwork').offsetWidth;
+if(widthoftable!=null){
+    if (widthoftable >= 730){
+    document.getElementById('OurNetwork').className = "OurNetworkOuterWide";
+    }
+    else{
+    document.getElementById('OurNetwork').className = "OurNetworkOuter";
+    }
+}
+}
+
+}
+
+
+// to Get Todays date for Firts Flight Date  start here
+var MyFlightDate;
+function FirstFlightDate(){    
+    var FlightDate=new Date();
+    var month=new Array(11);
+    month[0]="Jan";
+    month[1]="Feb";
+    month[2]="Mar";
+    month[3]="Apr";
+    month[4]="May";
+    month[5]="Jun";
+    month[6]="Jul"
+    month[7]="Aug";
+    month[8]="Sep";
+    month[9]="Oct";
+    month[10]="Nov";
+    month[11]="Dec";
+
+    FFDate = (FlightDate.getDate());
+    FFMonth = ("-"+month[FlightDate.getMonth()])
+    FFYear =("-"+FlightDate.getFullYear());
+    today = FFDate+FFMonth+FFYear
+    MyFlightDate = today;      
+    }
+    FirstFlightDate();
+    
+// to Get Todays date for Firts Flight Date end here
+
+// resizeWindow start here
+
+function getInternetExplorerVersion()
+	// Returns the version of Internet Explorer or a -1
+	// (indicating the use of another browser).
+	{
+		var rv = -1; // Return value assumes failure.
+		if (navigator.appName == 'Microsoft Internet Explorer')
+			{
+			var ua = navigator.userAgent;
+			var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+			if (re.exec(ua) != null)
+			rv = parseFloat( RegExp.$1 );
+			}
+		return rv;
+	}
+
+function MyScreenSize(){
+
+var ScrollHeight = document.body.scrollHeight;                                                                                                                                                                // Value for scroll height of the page
+var ScrollWidth = document.body.scrollWidth;                                                                                                                                                                                          // Value for scroll width of the page
+var ClientHeight = document.documentElement.clientHeight;       // Value for browser height of the page
+var ClietnWidth = document.documentElement.clientWidth;         // Value for Browser width of the page
+var OffsetHeight = document.documentElement.offsetHeight;      // Value for scroll height for Safari of the page
+var OffsetWidth = document.documentElement.offsetWidth;       // Value for height height for Safari of the page
+var OffsetBodyWidth = document.body.offsetWidth;
+var OffsetBodyHeight = document.body.offsetHeight;
+var BodyClientHeight = document.body.clientHeight;
+
+var myID = document.getElementById("MainContent");
+var contentID =  document.getElementById("ContentIn");
+
+var version=getInternetExplorerVersion();
+
+    if(ScrollHeight<=ClientHeight)
+    {
+        if (document.getElementById("MainContent")) {
+       	
+        if(navigator.appName == 'Microsoft Internet Explorer'){
+	
+			if(version<=6){
+		   		document.getElementById("MainContent").style.height = ClientHeight - 234 + "px";
+		   }
+		   else
+		   {
+           		document.getElementById("MainContent").style.minHeight = ClientHeight - 234 + "px";
+		   }  
+        
+	}
+	else
+	{
+
+		document.getElementById("MainContent").style.minHeight = ClientHeight - 206 + "px";
+		document.getElementById("MainContent").style.maxHeight = "auto";
+	}
+	
+	}
+	else{
+        
+		if(navigator.appName == "Microsoft Internet Explorer"){
+			
+			if(version<=6){
+				document.getElementById("ContentIn").style.height = ClientHeight - 234 + "px";
+			}
+			else
+			{
+				document.getElementById("ContentIn").style.minHeight = ClientHeight - 234 + "px";
+			}  
+		}
+        else
+		{
+        document.getElementById("ContentIn").style.minHeight = ClientHeight - 206 + "px";
+		document.getElementById("ContentIn").style.maxHeight = "auto";
+		}
+        
+      } 
+    }
+}
+//setTimeout("MyScreenSize()",10000);
+// resizeWindow end here
+//MyScreenSize();
+
+
+// New Tooltip Start // Kapil
+function showToolTip(e,text,arrowposition,dvwidth,element,ifPOS)
+{
+
+	if(document.all)e = event;
+	
+	if(BrowserDetect.browser=="Safari")
+	var clientPageYSafari = e.pageY;
+	else
+	var clientPageYSafari = e.clientY;
+	
+	
+
+	var obj = document.getElementById('bubble_tooltip');
+	var obj2 = document.getElementById('bubble_tooltip_content');
+	var ttBlueArrowPosLeft = document.getElementById("TTBlueArrowPosLeft");
+	var ttBlueArrowPosRight = document.getElementById("TTBlueArrowPosRight");
+	var ttBlueArrowPosBottom = document.getElementById("TTBlueArrowPosBottom");
+	var dvToolTipBlue = document.getElementById("dvToolTipBlue");
+	//New code For Arabic Right-to-Left - Start // By Shafi
+	var temURL = document.location.href;
+	var ind = "";
+	var cntyCode = "";
+	if (temURL.indexOf('.com/') > -1) {
+	    ind = temURL.indexOf('.com/') + 5;
+	}
+	else {
+	    ind = temURL.indexOf('/', 7) + 1;
+	}
+	cntyCode = temURL.substr(ind, 2);
+	cntyCode.toUpperCase();
+
+	if (cntyCode === "/AR" || cntyCode === "AR") {
+	    switch (arrowposition) {
+	        case 'right':
+	        case 'right_armedForces':
+	            arrowposition = "left";
+	            break;
+	        case 'left':
+	            arrowposition = "right";
+	            break;
+	    }
+	}
+	//New code For Arabic Right-to-Left - End // By Shafi
+	
+	
+//	if(arrowposition=="left" && e.clientX >750)
+//	{
+//	arrowposition="right_callouts";
+//    ttBlueArrowPosLeft.style.display = "none";
+//	ttBlueArrowPosRight.style.display = "";
+//	ttBlueArrowPosBottom.style.display = "none";
+//	dvToolTipBlue.style.padding = "0 15px 0 0";
+//	
+//	}
+	if(arrowposition=="left")
+	{
+	ttBlueArrowPosLeft.style.display = "";
+	ttBlueArrowPosRight.style.display = "none";
+	ttBlueArrowPosBottom.style.display = "none";
+	dvToolTipBlue.style.padding = "0 0 0 15px";
+	}
+
+	else if (arrowposition == "right" || arrowposition == "right_armedForces")
+	{
+	ttBlueArrowPosLeft.style.display = "none";
+	ttBlueArrowPosRight.style.display = "";
+	ttBlueArrowPosBottom.style.display = "none";
+	dvToolTipBlue.style.padding = "0 15px 0 0";
+	}	
+	else if(arrowposition=="right_webchkin")
+	{
+	ttBlueArrowPosLeft.style.display = "none";
+	ttBlueArrowPosRight.style.display = "";
+	ttBlueArrowPosBottom.style.display = "none";
+	dvToolTipBlue.style.padding = "0 15px 0 0";
+	}	
+	else if(arrowposition=="bottom")
+	{
+	ttBlueArrowPosLeft.style.display = "none";
+	ttBlueArrowPosRight.style.display = "none";
+	ttBlueArrowPosBottom.style.display = "";
+	dvToolTipBlue.style.padding = "0 0 0 0";
+	}
+	
+	else if(arrowposition=="bottom_book")
+	{
+	ttBlueArrowPosLeft.style.display = "none";
+	ttBlueArrowPosRight.style.display = "none";
+	ttBlueArrowPosBottom.style.display = "";
+	dvToolTipBlue.style.padding = "0 0 0 0";
+	}
+	
+	else if(arrowposition=="bottom_redeem")
+	{
+	ttBlueArrowPosLeft.style.display = "none";
+	ttBlueArrowPosRight.style.display = "none";
+	ttBlueArrowPosBottom.style.display = "";
+	dvToolTipBlue.style.padding = "0 0 0 0";
+	}
+
+	
+	if(text!=null)
+	obj2.innerHTML = text;
+	
+	obj.style.width = dvwidth + "px";
+
+ $(document).ready(function(){
+ $("#bubble_tooltip").show();
+
+ var st = Math.max(document.body.scrollTop,document.documentElement.scrollTop);
+ //if(navigator.userAgent.toLowerCase().indexOf('safari')!=-1)st=0; //commented for tooltip not working in chrome browser change to new line below
+ if (BrowserDetect.browser == "Safari") st = 0; // added on 13-June-12
+	var leftPos = e.clientX - 100;
+	if(leftPos<0)leftPos = 0;
+
+	 if(arrowposition=="left")
+	 {
+
+   obj.style.left = e.clientX + element.clientWidth - 10 + 'px';
+   obj.style.top = clientPageYSafari + st - 80 +"px"; // - obj.offsetHeight/2 + st + 'px';
+   obj.style.zIndex=10000;
+  }
+	    else if (arrowposition == "right" || arrowposition == "right_armedForces") {
+	 
+
+   obj.style.left = e.clientX - obj.clientWidth - element.clientWidth + 'px';
+   obj.style.top = clientPageYSafari + st - 80 +"px"; //- obj.offsetHeight/2 + st + 'px'; 
+   obj.style.zIndex=10000;
+  }
+   else if(arrowposition=="right_webchkin")
+	 {
+
+   obj.style.left = e.clientX - obj.clientWidth - element.clientWidth + 'px';
+   obj.style.top = clientPageYSafari + st - 80 +"px"; //- obj.offsetHeight/2 + st + 'px'; 
+   obj.style.zIndex=10000;
+  }
+  
+//  else if(arrowposition=="right_callouts")
+//	 {
+//   
+//    obj.style.width="auto";
+//   obj.style.left = e.clientX - obj.clientWidth - element.clientWidth + 'px';
+//   obj.style.top = clientPageYSafari + st - 80 +"px"; //- obj.offsetHeight/2 + st + 'px'; 
+//   obj.style.zIndex=10000;
+//   
+//  }
+  else
+  {
+  obj.style.left = leftPos + 100 - parseInt(dvwidth/2) + 'px';
+  obj.style.top = clientPageYSafari - element.clientHeight - 4 - obj.offsetHeight + st + 'px';
+  obj.style.zIndex=10000;
+  }
+ 
+ 
+
+if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+ var ieversion=new Number(RegExp.$1) // capture x.x portion and store as a number
+ if (ieversion<=6)
+ {
+		iframeCallOut=document.createElement("IFRAME");
+		iframeCallOut.style.position="absolute";
+		iframeCallOut.frameBorder="0px";
+		iframeCallOut.style.zIndex=10000;
+		iframeCallOut.style.width=obj.clientWidth - 23 +"px";
+		iframeCallOut.style.height=obj.clientHeight - 8 +"px";
+
+  if(ifPOS=="past_searches" && arrowposition=="right")
+  {
+     
+        iframeCallOut.style.left=e.clientX - obj.clientWidth - 14 + 'px';
+		 iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight/2 -35 + st + 'px';
+		
+		
+  }
+  else if(ifPOS=="past_searches" && arrowposition=="left")
+  {
+     iframeCallOut.style.left=e.clientX - obj.clientWidth + 230 + 'px';
+		 iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight/2 -35 + st + 'px';
+  }
+  else if(arrowposition=="left" && ifPOS=="" && ifPOS==null)
+	 {
+	 
+		 iframeCallOut.style.left=e.clientX + 27 + 'px';
+		 iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight/2 + 4 + st + 'px';
+  }
+
+	            else if ((arrowposition == "right" || arrowposition == "right_armedForces") && ifPOS == "" && ifPOS == null) {
+      
+		 iframeCallOut.style.left=e.clientX - obj.clientWidth - 14 + 'px';
+		 iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight/2 + 4 + st + 'px';
+		  
+  }
+   else if(arrowposition=="right_webchkin")
+  {
+		 iframeCallOut.style.left=e.clientX - obj.clientWidth + 0 + 'px';
+		 iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight/2 - 15 + st + 'px';
+		 
+		 
+		
+  }
+  
+//   else if(arrowposition=="right_callouts")
+//  {
+//		 iframeCallOut.style.left=e.clientX - obj.clientWidth + 4 + 'px';
+//		 iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight/2 + 15 + st + 'px';
+//		 //iframeCallOut.style.border="1px solid red";
+//		 
+//		
+//  }
+  else if(arrowposition=="bottom_book")
+  {
+  
+		iframeCallOut.style.left=leftPos + 0 + 'px';
+		iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight - 10 + st + 'px';
+		iframeCallOut.style.width=obj.clientWidth - 8 +"px";
+		iframeCallOut.style.height=obj.clientHeight - 27 +"px";
+  }
+  else if(arrowposition=="bottom_redeem")
+  {
+       
+		iframeCallOut.style.left=leftPos + 13 + 'px';
+		iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight - 10 + st + 'px';
+		iframeCallOut.style.width=obj.clientWidth - 8 +"px";
+		iframeCallOut.style.height=obj.clientHeight - 20 +"px";
+  }
+  else if (arrowposition == "right_armedForces")
+   {
+	     obj.style.left = e.clientX - obj.clientWidth - element.clientWidth - 10 + "px";
+	     iframeCallOut.style.left = e.clientX - obj.clientWidth - element.clientWidth - 10 + "px";
+	     iframeCallOut.style.top = obj.style.top;
+	     iframeCallOut.style.width = obj.clientWidth - 17 + "px";
+   }
+  
+  else
+  {
+		iframeCallOut.style.left=leftPos - 21 + 'px';
+		iframeCallOut.style.top= clientPageYSafari - obj.offsetHeight - 10 + st + 'px';
+		iframeCallOut.style.width=obj.clientWidth - 8 +"px";
+		iframeCallOut.style.height=obj.clientHeight - 11 +"px";
+  }
+
+		document.body.appendChild(iframeCallOut)
+		}
+}
+
+ });
+
+	
+}
+
+function hideToolTip()
+{
+$("#bubble_tooltip").hide();
+	if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
+		var ieversion=new Number(RegExp.$1) // capture x.x portion and store as a number
+		if (ieversion<=6)
+		{
+		if(iframeCallOut){iframeCallOut.style.display="none"};
+		}
+	}
+	
+	
+}
+// New Tooltip End // Kapil
+/* dashboard JACC prev next start*/
+
+function onwidgetload() {
+
+    document.getElementById('jacc_img').style.display = "";
+    if (document.getElementById('jacc_headtxt') && document.getElementById('jacc_img') && document.getElementById('jacc_txt') && document.getElementById('jacc_link') && typeof jaccArr != null) {
+        if (jaccArr.length == 1) {
+            document.getElementById('prev').style.visibility = "hidden";
+            document.getElementById('next').style.visibility = "hidden";
+        }
+        else {
+            document.getElementById('prev').style.visibility = "hidden";
+        }
+
+        for (i = 0; i < jaccArr.length; i++) {
+            str = jaccArr[0];
+            str = str.split('|');
+
+            //alert(str[0].length)
+
+            if ($.trim(str[0].length) != 0) {
+                document.getElementById('jacc_headtxt').innerHTML = "<b>" + str[0] + "</b>";
+            }
+            else {
+                $('#jacc_headtxt').html('');
+                $('#jacc_headtxt').hide();
+            }
+
+            document.getElementById('jacc_img').src = str[1];
+
+            if ($.trim(str[2].length) != 0) {
+                document.getElementById('jacc_txt').innerHTML = str[2];
+            }
+            else {
+                $('#jacc_txt').hide();
+            }
+
+            if (str[3].lastIndexOf(" 1") > 0) {
+                str[3] = str[3].substring(0, str[3].length - 2);
+                var index = str[3].indexOf(">");
+                var arrTemp = new Array();
+                arrTemp[0] = str[3].substring(0, index);
+                arrTemp[1] = str[3].substring(index, str[3].length);
+                document.getElementById('jacc_link').innerHTML = "";
+                document.getElementById('jacc_link').innerHTML = arrTemp[0] + ' target="_blank" ' + arrTemp[1];
+
+
+            }
+            else {
+                str[3] = str[3].substring(0, str[3].length - 2);
+
+                if ($.trim(str[3].length) != 0) {
+                    document.getElementById('jacc_link').innerHTML = "";
+                    document.getElementById('jacc_link').innerHTML = str[3];
+                }
+                else {
+                    $('#jacc_link').parents('.link').hide();
+                }
+
+                //document.getElementById('jacc_link').href=str[3];
+                //document.getElementById('jacc_link').target="";
+            }
+
+        }
+
+    }
+
+}
+ var countDash = 0;
+ function dashboard_jacc(id) {
+     try {
+         var len = jaccArr.length;
+         if (id == "next") {
+
+
+             countDash = countDash + 1;
+             for (i = 0; i < len; i++) {
+                 str = jaccArr[countDash];
+                 str = str.split('|');
+                 document.getElementById('jacc_headtxt').innerHTML = "<b>" + str[0] + "</b>";
+                 document.getElementById('jacc_img').src = str[1];
+                 document.getElementById('jacc_txt').innerHTML = str[2];
+                 if (str[3].indexOf(".") != -1 || str[3].indexOf("/") != -1) {
+
+                     if (str[3].lastIndexOf(" 1") > 0) {
+
+
+                         str[3] = str[3].substring(0, str[3].length - 2);
+                         var index = str[3].indexOf(">");
+                         var arrTemp = new Array();
+                         arrTemp[0] = str[3].substring(0, index);
+                         arrTemp[1] = str[3].substring(index, str[3].length);
+                         document.getElementById('jacc_link').innerHTML = "";
+                         document.getElementById('jacc_link').innerHTML = arrTemp[0] + ' target="_blank" ' + arrTemp[1];
+
+                         /*str[3]=str[3].substring(0,str[3].length-2);
+                         document.getElementById('jacc_link').href=str[3];
+                         document.getElementById('jacc_link').target="_blank";*/
+
+                     }
+                     else {
+
+                         str[3] = str[3].substring(0, str[3].length - 2);
+
+                         document.getElementById('jacc_link').innerHTML = "";
+                         document.getElementById('jacc_link').innerHTML = str[3];
+                         //document.getElementById('jacc_link').href=str[3];
+                         //document.getElementById('jacc_link').target="";
+                     }
+                 }
+                 else {
+
+                     document.getElementById('jacc_link').innerHTML = "";
+                     //document.getElementById('jacc_link').href="#";
+                     //document.getElementById('jacc_link').target="";
+                 }
+
+
+             }
+
+
+             if (countDash == len - 1) {
+                 document.getElementById('next').style.visibility = "hidden";
+                 document.getElementById('prev').style.visibility = "visible";
+             }
+
+             if (countDash != 0)
+                 document.getElementById('prev').style.visibility = "visible";
+
+
+            $('#jacc_headtxt, #jacc_txt').fadeIn('slow');
+            $('#jacc_link').parents('.link').fadeIn('slow');
+
+
+         }
+
+
+
+         if (id == "prev") {
+
+             countDash = countDash - 1;
+             for (i = 0; i < len; i++) {
+                 str = jaccArr[countDash];
+                 str = str.split('|');
+                 document.getElementById('jacc_headtxt').innerHTML = "<b>" + str[0] + "</b>";
+                 document.getElementById('jacc_img').src = str[1];
+                 document.getElementById('jacc_txt').innerHTML = str[2];
+
+                 if ($.trim(str[0].length) == 0) {
+                     $('#jacc_headtxt').html('');
+                     $('#jacc_headtxt').hide();
+                 }
+                 else {
+                     $('#jacc_headtxt').show();
+                 }
+
+                 if ($.trim(str[2].length) == 0) {
+                     $('#jacc_txt').hide();
+                 }
+                 else {
+                     $('#jacc_txt').show();
+                 }
+
+                 if ($.trim(str[3].length) == 0) {
+                     $('#jacc_link').parents('.link').hide();
+                 }
+                 else {
+                     $('#jacc_link').parents('.link').show();
+                 }
+
+                 if (str[3].indexOf(".") != -1 || str[3].indexOf("/") != -1) {
+
+                     if (str[3].lastIndexOf(" 1") > 0) {
+                         str[3] = str[3].substring(0, str[3].length - 2);
+                         var index = str[3].indexOf(">");
+                         var arrTemp = new Array();
+                         arrTemp[0] = str[3].substring(0, index);
+                         arrTemp[1] = str[3].substring(index, str[3].length);
+                         document.getElementById('jacc_link').innerHTML = "";
+                         document.getElementById('jacc_link').innerHTML = arrTemp[0] + ' target="_blank" ' + arrTemp[1];
+
+                         /*str[3]=str[3].substring(0,str[3].length-2);
+                         document.getElementById('jacc_link').href=str[3];
+                         document.getElementById('jacc_link').target="_blank";
+                         */
+                     }
+                     else {
+
+                         str[3] = str[3].substring(0, str[3].length - 2);
+
+                         document.getElementById('jacc_link').innerHTML = "";
+                         document.getElementById('jacc_link').innerHTML = str[3];
+                         //document.getElementById('jacc_link').href=str[3];
+                         //document.getElementById('jacc_link').target="";
+                     }
+                 }
+                 else {
+                     document.getElementById('jacc_link').innerHTML = "";
+                     //document.getElementById('jacc_link').href="#";
+                     //document.getElementById('jacc_link').target="";
+                 }
+
+             }
+
+             if (countDash == 0)
+                 document.getElementById('prev').style.visibility = "hidden";
+
+             if (countDash < len)
+                 document.getElementById('next').style.visibility = "visible";
+
+
+
+         }
+
+     }
+
+     catch (e) {
+         // alert(e.message);
+     }
+
+ }
+ 
+ /* dashboard JACC prev next ends*/
+ /*function for Enroll now phone numbers starts */
+
+
+ function SetDefaultCSS(e, code) {
+
+     var fieldSet = document.getElementById(code.id);
+     var fieldSetOnload = document.getElementById(code);
+
+
+     if (e.type == "focus" && fieldSet != null) {
+         var CName = fieldSet.className;
+         if (CName.indexOf("Blank") == -1)
+             fieldSet.className = CName + "Blank";
+
+     }
+
+     if (e.type == "blur" && fieldSet.value == '' && fieldSet != null) {
+         var CName = fieldSet.className;
+         if (CName.indexOf("Blank") > -1)
+             CName = CName.substring(0, CName.length - 5);
+         fieldSet.className = CName;
+
+     }
+
+     if (fieldSetOnload != null) {
+         if (e == "" && fieldSetOnload.value == '') {
+             var CName = fieldSetOnload.className;
+             if (CName.indexOf("Blank") == -1)
+                 fieldSetOnload.className = CName + "Blank";
+
+         }
+         else {
+             var CName = fieldSetOnload.className;
+             if (CName.indexOf("Blank") > -1)
+                 CName = CName.substring(0, CName.length - 5);
+             fieldSetOnload.className = CName;
+
+         }
+     }
+
+
+ }
+
+
+
+
+
+ function SetDefaultCSSForCountryCode(e,code)
+{
+
+
+ var fieldSet = document.getElementById(code.id);
+ var fieldSetOnload = document.getElementById(code);
+
+ if(e.type=="focus" && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "ISDTxtBoxBlank";
+
+ }
+
+ if(e.type=="blur" && fieldSet.value =='' && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "ISDTxtBox";
+
+ }
+
+if(fieldSetOnload!=null)
+{
+if(e==""&& fieldSetOnload.value =='')
+fieldSetOnload.className = "ISDTxtBox"; 
+else
+fieldSetOnload.className = "ISDTxtBoxBlank";  
+}
+
+
+}
+
+
+
+function SetDefaultCSSForMobileNumber(e,code)
+
+{
+
+ var fieldSet = document.getElementById(code.id);
+ var fieldSetOnload = document.getElementById(code);
+
+ if(e.type=="focus" && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "CellTxtBoxBlank";
+
+ }
+
+ if(e.type=="blur" && fieldSet.value =='' && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "CellTxtBox";
+
+ }
+
+if(fieldSetOnload!=null)
+{
+if(e==""&& fieldSetOnload.value =='')
+fieldSetOnload.className = "CellTxtBox"; 
+else
+fieldSetOnload.className = "CellTxtBoxBlank"; 
+}
+}
+
+
+function SetDefaultCSSForSTDCode(e,code)
+
+{
+
+ var fieldSet = document.getElementById(code.id);
+ var fieldSetOnload = document.getElementById(code);
+
+ if(e.type=="focus" && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "STDTxtBoxBlank";
+
+ }
+
+ if(e.type=="blur" && fieldSet.value =='' && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "STDTxtBox";
+
+ }
+if(fieldSetOnload!=null)
+{
+if(e==""&& fieldSetOnload.value =='')
+fieldSetOnload.className = "STDTxtBox"; 
+else
+fieldSetOnload.className = "STDTxtBoxBlank";
+}
+
+}
+
+function SetDefaultCSSForPhoneNumber(e,code)
+
+{
+
+ var fieldSet = document.getElementById(code.id);
+ var fieldSetOnload = document.getElementById(code);
+
+ if(e.type=="focus" && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "PhoneTxtBoxBlank";
+
+ }
+
+ if(e.type=="blur" && fieldSet.value =='' && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "PhoneTxtBox";
+
+ }
+
+if(fieldSetOnload!=null)
+{
+if(e==""&& fieldSetOnload.value =='')
+fieldSetOnload.className = "PhoneTxtBox"; 
+else
+fieldSetOnload.className = "PhoneTxtBoxBlank";
+}
+
+}
+ /*function for Enroll now phone numbers ends */
+ //NJP-2073 - For Enrol Passport - Starts
+  function SetDefaultCSSForPassport(e,code)
+{
+
+
+ var fieldSet = document.getElementById(code.id);
+ var fieldSetOnload = document.getElementById(code);
+
+ if(e.type=="focus" && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "PassportBlank";
+
+ }
+
+ if(e.type=="blur" && fieldSet.value =='' && fieldSet!=null)
+
+ {
+
+     fieldSet.className = "Passport";
+
+ }
+
+if(fieldSetOnload!=null)
+{
+if(e==""&& fieldSetOnload.value =='')
+fieldSetOnload.className = "Passport"; 
+else
+fieldSetOnload.className = "PassportBlank";  
+}
+
+
+}
+function SetDefaultCSSForFaxNumber(e,code)
+{
+ var fieldSet = document.getElementById(code.id);
+ var fieldSetOnload = document.getElementById(code);
+
+ if(e.type=="focus" && fieldSet!=null)
+ {
+     fieldSet.className = "FaxTxtBoxBlank";
+ }
+ if(e.type=="blur" && fieldSet.value =='' && fieldSet!=null)
+ {
+     fieldSet.className = "FaxTxtBox";
+ }
+if(fieldSetOnload!=null)
+{
+if(e==""&& fieldSetOnload.value =='')
+fieldSetOnload.className = "FaxTxtBox"; 
+else
+fieldSetOnload.className = "FaxTxtBoxBlank";
+}
+
+}
+ //NJP-2073 - Ends
+ 
+//** Kapil Kanojia ** Browser Detection Start //
+var BrowserDetect = {
+    init: function() {
+        this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+        this.version = this.searchVersion(navigator.userAgent)
+			|| this.searchVersion(navigator.appVersion)
+			|| "an unknown version";
+        this.OS = this.searchString(this.dataOS) || "an unknown OS";
+    },
+    searchString: function(data) {
+        for (var i = 0; i < data.length; i++) {
+            var dataString = data[i].string;
+            var dataProp = data[i].prop;
+            this.versionSearchString = data[i].versionSearch || data[i].identity;
+            if (dataString) {
+                if (dataString.indexOf(data[i].subString) != -1)
+                    return data[i].identity;
+            }
+            else if (dataProp)
+                return data[i].identity;
+        }
+    },
+    searchVersion: function(dataString) {
+        var index = dataString.indexOf(this.versionSearchString);
+        if (index == -1) return;
+        return parseFloat(dataString.substring(index + this.versionSearchString.length + 1));
+    },
+    dataBrowser: [
+		{ string: navigator.userAgent,
+		    subString: "OmniWeb",
+		    versionSearch: "OmniWeb/",
+		    identity: "OmniWeb"
+		},
+		{
+		    string: navigator.vendor,
+		    subString: "Apple",
+		    identity: "Safari"
+		},
+		{
+		    prop: window.opera,
+		    identity: "Opera"
+		},
+		{
+		    string: navigator.userAgent,
+		    subString: "Firefox",
+		    identity: "Firefox"
+		},
+		{		// for newer Netscapes (6+)
+		    string: navigator.userAgent,
+		    subString: "Netscape",
+		    identity: "Netscape"
+		},
+		{
+		    string: navigator.userAgent,
+		    subString: "MSIE",
+		    identity: "Explorer",
+		    versionSearch: "MSIE"
+		},
+		{
+		    string: navigator.userAgent,
+		    subString: "Gecko",
+		    identity: "Mozilla",
+		    versionSearch: "rv"
+		},
+		{ 		// for older Netscapes (4-)
+		    string: navigator.userAgent,
+		    subString: "Mozilla",
+		    identity: "Netscape",
+		    versionSearch: "Mozilla"
+		}
+	],
+    dataOS: [
+		{
+		    string: navigator.platform,
+		    subString: "Win",
+		    identity: "Windows"
+		},
+		{
+		    string: navigator.platform,
+		    subString: "Mac",
+		    identity: "Mac"
+		},
+		{
+		    string: navigator.platform,
+		    subString: "Linux",
+		    identity: "Linux"
+		}
+	]
+
+};
+BrowserDetect.init();
+//** Kapil Kanojia ** Browser Detection End //
+
+
+XÍAÚ      TUmöTUmö:ý¸ÄTV½   7:https://https.jetairways.com/Scripts/CommonFunction.js security-info FnhllAKWRHGAlo+ESXykKAAAAAAAAAAAwAAAAAAAAEaphjojKOpF0qJaNXyu+n+CAAQAAgAAAAAAAAAAAAAAACw4N6+LhUposNgK7YiYWzI/H82DxalM0aJQdnbKfH40ZgoyJpFcT/u7IImFpjLfBfjtg2TO2UxuhrpIr1PDk+YAAAAAAAAEKjCCBCYwggMOoAMCAQICDgIAAAAAAUVvfQgqt5S/MA0GCSqGSIb3DQEBBQUAMEYxFzAVBgNVBAoTDkN5YmVydHJ1c3QgSW5jMSswKQYDVQQDEyJDeWJlcnRydXN0IFB1YmxpYyBTdXJlU2VydmVyIFNWIENBMB4XDTE0MDQxNzExNDAzOFoXDTE1MDQxNzExNDAzOFowgYUxCzAJBgNVBAYTAklOMRQwEgYDVQQIEwtNYWhhcmFzaHRyYTEPMA0GA1UEBxMGTXVtYmFpMSAwHgYDVQQKExdKZXQgQWlyd2F5cyAoSW5kaWEpIEx0ZDESMBAGA1UECxMJZUNvbW1lcmNlMRkwFwYDVQQDFBAqLmpldGFpcndheXMuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqhHDspu4SJlyPFjjEKIsAUddS3ya4n+zmjdOgwDRV9GKS6htqp165O4V5idQgTKJB2NyOsGoBhew259zTZ4KT145cNb4vXEO91YfUwJje5lpPxVTH73hvGSpnB8mKndew3HS3tCw0GZH6FrupR2EK9HMekBKBBnSdLq5ytfkhm3S2Vw/UUMoLtRz7Cu/GGWEObGiqKQ3BFuMOJ+T01B1XbsZTQJmENksduxGzp0clY4QE1yDdGGKJb8/wD6PoD6pvHDNHciCkAMzUwGLyUxfDE0AEFqfOPQOoERV9SAxazwPGlkJGagpxbwtn2yg/fyc52Z3Xl+p3sDaVuGMZHkq+QIDAQABo4HRMIHOMB8GA1UdIwQYMBaAFASYYN+AG5ZJXWVWLaUsCSQK7Ny5MD8GA1UdHwQ4MDYwNKAyoDCGLmh0dHA6Ly9jcmwub21uaXJvb3QuY29tL1B1YmxpY1N1cmVTZXJ2ZXJTVi5jcmwwHQYDVR0OBBYEFFtjKIBe3PMh+BpziooDijS/GnT5MAkGA1UdEwQCMAAwDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjARBglghkgBhvhCAQEEBAMCBsAwDQYJKoZIhvcNAQEFBQADggEBAExdINorM3qWEBejkdhD2i1GID2tB1TJ+1zzTTTwie7QmHEBdROq+gjhapWJfodiaAXcqDX16HLxxeV6AtjgaB7u8KHpIcrgQ+HJHgy9fd3ysOOjAzF+F56pRn/JBbPLGSek6kD8UBRq+PjLOtouVD76c/tdLMp/X5/hpBSQZCiyvsUXsFCo0EKrpDttvkDEPzBO6i87b9u12tzu4x+KRJRtPFfqqLJKpVjTtqV+ddzW1IziV7q37D1FsYkzWsxE0+b/LhxPBisdaA3TEfrqor5qy30vOTix1qP1LvQHY5RXecM5MLlpLeqm4LRubIZFWn0sQRVZtQDdnORbRf4tH6MAAAEAAAABAAAAABxUTFNfUlNBX1dJVEhfQUVTXzI1Nl9DQkNfU0hBAAAAAQA= request-method GET response-head HTTP/1.1 200 OK
+Content-Type: application/javascript
+Last-Modified: Mon, 07 Apr 2014 11:23:35 GMT
+Accept-Ranges: bytes
+Etag: "1718c7d05352cf1:0"
+Server: Microsoft-IIS/8.5
+X-Powered-By: ASP.NET
+Content-Length: 39657
+front-end-https: on
+Cache-Control: max-age=86400
+Date: Sat, 01 Nov 2014 23:23:45 GMT
+ uncompressed-len 0   šé

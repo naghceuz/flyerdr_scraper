@@ -1,0 +1,874 @@
+function ReturnStateChange(F) {
+    var A = document.getElementById("chkReturn");
+    var D = document.getElementById("seladate1");
+    var H = document.getElementById(F);
+    if (A.checked == true) {
+        shn_hidetool("seladate1OW");
+        shn_showtool("seladate1");
+        var E = H.onclick.toString().getFuncBody().replace("return false;", "");
+        H.onclick = new Function(E);
+        D.onclick = new Function(E);
+        var G = document.getElementById("rdoByPriceFlex");
+        if (G != null) {
+            G.disabled = false;
+            if (defaultResultsByPriceFlex) {
+                G.checked = true
+            }
+        }
+        var B = document.getElementById("resultby");
+        if (B != null && B.options != null) {
+            for (var C = 0; C < B.options.length; C++) {
+                if (B.options[C].value == "2") {
+                    B.options[C].disabled = false;
+                    if (defaultResultsByPriceFlex) {
+                        B.options[C].checked = true
+                    }
+                }
+            }
+        }
+    }
+    else {
+        shn_showtool("seladate1OW");
+        shn_hidetool("seladate1");
+        H.onclick = new Function("return false;" + H.onclick.toString().getFuncBody());
+        D.onclick = new Function("return false;" + H.onclick.toString().getFuncBody());
+        var G = document.getElementById("rdoByPriceFlex");
+        if (G != null) {
+            if (G.checked == true) {
+                G.checked = false;
+                document.getElementById("rdoByPrice").checked = true
+            }
+            G.disabled = true
+        }
+        var B = document.getElementById("resultby");
+        if (B != null && B.options != null) {
+            for (var C = 0; C < B.options.length; C++) {
+                if (B.options[B.selectedIndex].value == "2" && B.options[C].value == "0") {
+                    B.selectedIndex = C
+                }
+                if (B.options[C].value == "2") {
+                    B.options[C].disabled = true
+                }
+            }
+        }
+    }
+} String.prototype.getFuncBody = function() { var A = this.toString(); A = A.replace(/[^{]+{/, ""); A = A.substring(0, A.length - 1); A = A.replace(/\n/gi, ""); if (!A.match(/\(.*\)/gi)) { A += ")" } return A }; var lastQuery = ""; var ctrlReturn = document.getElementById("chkReturn"); if (ctrlReturn) { ctrlReturn.checked = true } var defaultResultsByPriceFlex = false; var ctrlPriceFlex = document.getElementById("rdoByPriceFlex"); if (ctrlPriceFlex != null) { defaultResultsByPriceFlex = ctrlPriceFlex.checked } else { var ctrlPriceList = document.getElementById("resultby"); if (ctrlPriceList != null && ctrlPriceList.options[ctrlPriceList.selectedIndex].value == "2") { defaultResultsByPriceFlex = true } };
+
+// Calendar Hide Start
+var bodyHideCalendar = function() {
+
+    var inputArray = document.getElementsByTagName('input');
+    var divArray = document.getElementsByTagName('div');
+    for (i = 0; i < inputArray.length; i++) {
+        if (inputArray[i].className == "CalendarIcon") {
+            document.body.onclick = function() { return false; };
+        }
+        else {
+            document.body.onclick = function() {
+                for (j = 0; j < divArray.length; j++) {
+                    if ((divArray[j].id == "yearDropDown" || divArray[j].className == "monthYearPicker" || divArray[j].className == "selectBox") && calendarStateCheck.style.display == "block") {
+                        document.body.onclick = function() { return false; };
+                    }
+                    else {
+                        EKCalendar.closeCalendar(); //calendarStateCheck.style.display="none";
+                    }
+                }
+            }
+        }
+    }
+}
+// Calendar Hide End
+
+var calendarStateCheck;
+
+function EKCalendar() { }
+EKCalendar.configure = function() {
+    EKCalendar.Config = function() { };
+    EKCalendar.Config.imagePath = "/App_Themes/Default/Img/Calendar/";
+    EKCalendar.Config.calendarImages = ["left.gif", "right.gif", "close.gif", "down.gif", "left_off.gif", "right_off.gif"];
+    EKCalendar.Config.maxScreen = 960;
+    EKCalendar.Config.txtClose = "";
+    EKCalendar.Config.txtPrevMonth = "";
+    EKCalendar.Config.txtNextMonth = "";
+    EKCalendar.Config.txtSlctMonth = "";
+    EKCalendar.Config.txtSlctYear = "";
+    EKCalendar.Config.monthLong = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    EKCalendar.Config.monthShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    EKCalendar.Config.dayShort = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    EKCalendar.Config.firstDay = 0;
+    EKCalendar.Config.monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    EKCalendar.MSIE = (navigator.userAgent.indexOf("MSIE") >= 0 && navigator.userAgent.indexOf("Opera") < 0);
+    EKCalendar.Opera = (navigator.userAgent.indexOf("Opera") >= 0);
+    EKCalendar.iCab = (navigator.userAgent.indexOf("iCab") >= 0)
+};
+EKCalendar.padLeft = function(D, B, A) {
+    var C = D + "";
+    while (C.length < A) {
+        C = B + C
+    }
+    return C
+};
+EKCalendar.showItem = function(A) {
+    A.style.display = "block";
+    A.style.visibility = "visible"
+};
+EKCalendar.hideItem = function(A) {
+    A.style.display = "none";
+    A.style.visibility = "hidden"
+};
+EKCalendar.isHidden = function(A) { return (A.style.display == "none") };
+EKCalendar.findPos = function(A) {
+    var B = function() { };
+    B.x = 0;
+    B.y = 0;
+    while (A.offsetParent) {
+        B.x += A.offsetLeft;
+        B.y += A.offsetTop;
+        A = A.offsetParent
+    } return B
+};
+EKCalendar.getWindowSize = function() {
+    var A = function() { };
+    A.width = 0;
+    A.height = 0;
+    if (typeof (window.innerWidth) == "number") {
+        A.width = window.innerWidth;
+        A.height = window.innerHeight
+    } else {
+        if (document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)) {
+            A.width = document.documentElement.clientWidth;
+            A.height = document.documentElement.clientHeight
+        } else {
+            if (document.body && (document.body.clientWidth || document.body.clientHeight)) {
+                A.width = document.body.clientWidth;
+                A.height = document.body.clientHeight
+            } 
+        } 
+    } return A
+};
+EKCalendar.getScrollPosition = function() {
+    var A = function() { };
+    A.x = 0;
+    A.y = 0;
+    if (typeof (window.pageYOffset) == "number") {
+        A.x = window.pageXOffset;
+        A.y = window.pageYOffset
+    }
+    else {
+        if (document.body && (document.body.scrollLeft || document.body.scrollTop)) {
+            A.x = document.body.scrollLeft;
+            A.y = document.body.scrollTop
+        }
+        else {
+            if (document.documentElement && (document.documentElement.scrollLeft || document.documentElement.scrollTop)) {
+                A.x = document.documentElement.scrollLeft;
+                A.y = document.documentElement.scrollTop
+            }
+        }
+    } return A
+};
+EKCalendar.preloadImages = function() {
+    if (document.images) {
+        for (var B = 0; B < this.Config.calendarImages.length; B++) {
+            var A = new Image(1, 1); A.src = this.Config.imagePath + this.Config.calendarImages[B]
+        }
+    }
+};
+EKCalendar.purge = function(D) {
+    if (this.MSIE) {
+        var B = D.attributes, C, A, E;
+        if (B) {
+            A = B.length;
+            for (C = 0; C < A; C += 1) {
+                E = B[C].name;
+                if (typeof D[E] === "function") {
+                    D[E] = null
+                }
+            }
+        }
+        B = D.childNodes;
+        if (B) {
+            A = B.length;
+            for (C = 0; C < A; C += 1) {
+                this.purge(D.childNodes[C])
+            }
+        }
+    }
+};
+EKCalendar.leapYear = function(A) {
+    return ((A % 400) === 0 || ((A % 4) === 0 && (A % 100) !== 0))
+};
+EKCalendar.cancelEvent = function() { return false };
+EKCalendar.resolveMonth = function(D, A, C) {
+    for (var B = 0; B < 12; B++) {
+        if (this.Config.monthShort[B] == D) {
+            if (A > 0 && A <= this.Config.monthDays[B]) {
+                return B
+            }
+            else {
+                if (A == 29 && B == 1 && this.leapYear(C)) {
+                    return B
+                } else {
+                    return -1
+                }
+            }
+        }
+    }
+    return -1
+};
+EKCalendar.parseDate = function(B) {
+    if (B) {
+
+        var D = B.split("-");
+        if (D.length == 3) {
+            if (D[2].length == 2) {
+                D[2] = "20" + D[2]
+            } D[2] = parseFloat(D[2]);
+            D[0] = parseFloat(D[0]);
+            D[1] = this.resolveMonth(D[1], D[0], D[2]);
+            if (D[1] != -1) {
+                try {
+                    var A = new Date(D[2], D[1], D[0]);
+                    if (A < this.startDate) {
+                        A.setTime(this.startDate.getTime())
+                    }
+                    if (A > this.endDate) {
+                        A.setTime(this.endDate.getTime());
+                        A.setDate(1)
+                    } return A
+                }
+                catch (C) {
+                    return this.startDate
+                }
+            }
+        }
+    } return this.startDate
+};
+
+EKCalendar.display = function(B, A, D, C, F, E, AA, DD) {
+    var currentTime = new Date()
+    if (!this.Config) { return }
+
+    if (typeof C == "undefined" || typeof C == null) { C = null }
+    if (typeof F == "undefined" || typeof F == null) { F = 0 }
+    if (typeof E == "undefined" || typeof E == null) { E = 0 }
+    if (A == "undefined" || A == null) { A = AA }
+    if (D == "undefined" || D == null) { D = DD }
+    this.startDate = new Date(A.getTime());
+    this.currentDate = new Date();
+    //alert('1');
+    this.endDate = new Date(D.getTime());
+    if (B && B.tagName == "INPUT" && B.value != '') {
+
+        this.inputDate = this.parseDate(B.value);
+        this.outputDate = new Date(this.inputDate.getTime())
+        // alert('thisinputDate');
+        // alert(this.inputDate);
+        // alert('thisoutputDate');
+        // alert(this.outputDate);
+    }
+    else if (B.value == '' || B.value == "undefined" || B.value == null) {
+        //  alert('2');
+        if (typeof hiddenInputDOB != "undefined") {
+            if (document.getElementById(hiddenInputDOB) && hiddenInputDOB.indexOf(B.id) != -1) {
+                // alert('3');
+                this.inputDate = this.parseDate(B.value);
+                this.outputDate = new Date(this.inputDate.getTime())
+            }
+            else {
+                // alert('4');
+                this.inputDate = new Date();
+                this.outputDate = new Date(this.inputDate.getTime())
+            }
+        }
+        else if (this.startDate.getFullYear() > currentTime.getFullYear()) {
+            // alert('5');
+            this.inputDate = this.startDate;
+            this.inputDate.setDate(this.startDate.getDate() - 1);
+            this.outputDate = this.inputDate;
+        }
+        else if (typeof hiddenInputDOB == "undefined") {
+            //  alert('undefined');
+            // alert('6');
+            this.inputDate = new Date();
+            this.outputDate = new Date(this.inputDate.getTime())
+        }
+
+    }
+    else {
+        // alert('7');
+        return
+    }
+    if (!this.calendarDiv) { this.initialize() }
+    else {
+        if (!this.isHidden(this.calendarDiv)) { this.closeCalendar(); return false }
+        this.updateMonths(this.monthPicker);
+        this.updateYears(this.yearPicker);
+        this.writeCalendarContent()
+    }
+    // alert('outputDate')
+    // alert(this.outputDate);
+    // alert('inputDate')
+    // alert(this.inputDate);
+    this.returnDateTo = B;
+    this.dependentDateTo = C;
+    this.dependentDaysDiff = F;
+    this.calendarDiv.style.zIndex = -1000;
+    calendarStateCheck = this.calendarDiv;
+    this.showItem(this.calendarDiv);
+    this.positionCalendar(E);
+    this.calendarDiv.style.zIndex = 10000000000;
+
+
+    if (this.iframe) {
+
+        this.showItem(this.iframe);
+        this.iframe.style.height = "140px";
+        this.iframe.style.width = "195px";
+        //this.iframe.style.border="1px solid red";
+        this.iframe.style.zIndex = 850;
+    }
+
+
+    document.body.onclick = function() {
+
+        // Mouseover Button Replace Class Start
+        var inputArray = document.getElementsByTagName('input');
+        var divArray = document.getElementsByTagName('div');
+        for (i = 0; i < inputArray.length; i++) {
+            if (inputArray[i].className == "CalendarIcon") {
+                document.body.onclick = function() { return false; };
+            }
+            else {
+                document.body.onclick = function() {
+                    if (calendarStateCheck.style.display == "block") {
+                        EKCalendar.closeCalendar(); //calendarStateCheck.style.display="none";
+                    }
+
+                }
+            }
+        }
+        // Mouseover Button Replace Class End
+
+    }
+};
+EKCalendar.initialize = function() {
+    if (this.MSIE) {
+        this.iframe = document.createElement("IFRAME");
+        this.iframe.style.position = "absolute";
+        this.iframe.border = "0px";
+        this.iframe.style.border = "0px";
+        document.body.appendChild(this.iframe)
+    }
+    this.calendarDiv = document.createElement("DIV");
+    this.calendarDiv.id = "calendarDiv";
+    this.calendarDiv.onselectstart = this.cancelEvent;
+    this.calendarDiv.onmousedown = this.cancelEvent;
+    this.calendarDiv.style.zIndex = 1000;
+    document.body.appendChild(this.calendarDiv);
+    this.writeTopBar();
+    this.updateMonths(this.monthPicker);
+
+    this.updateYears(this.yearPicker);
+    this.writeCalendarContent()
+};
+EKCalendar.writeTopBar = function() {
+    this.topBar = document.createElement("DIV");
+    this.topBar.className = "topBar";
+    this.topBar.id = "topBar";
+    this.topBar.onclick = function() {
+
+        document.body.onclick = function() { bodyHideCalendar(); }
+
+    };
+    this.calendarDiv.appendChild(this.topBar);
+    this.prevMonthButton = document.createElement("DIV");
+    this.prevMonthButton.style.marginRight = "1px";
+    this.prevMonthButton.id = "prevMonthButton";
+    var A = document.createElement("IMG");
+    A.src = this.Config.imagePath + this.Config.calendarImages[0];
+    A.title = this.Config.txtPrevMonth;
+    A.alt = this.Config.txtPrevMonth;
+    A.onclick = this.switchMonth;
+    this.prevMonthButton.appendChild(A);
+    this.topBar.appendChild(this.prevMonthButton);
+    if (this.Opera || this.iCab) { this.prevMonthButton.style.width = "16px" }
+    this.nextMonthButton = document.createElement("DIV");
+    this.nextMonthButton.style.marginRight = "3px";
+    this.nextMonthButton.id = "nextMonthButton";
+    var G = document.createElement("IMG");
+    G.src = this.Config.imagePath + this.Config.calendarImages[1];
+    G.title = this.Config.txtNextMonth;
+    G.alt = this.Config.txtNextMonth;
+    G.onclick = this.switchMonth;
+    this.nextMonthButton.appendChild(G);
+    this.topBar.appendChild(this.nextMonthButton);
+    if (this.Opera || this.iCab) {
+        this.nextMonthButton.style.width = "16px"
+    } var B = document.createElement("DIV");
+    B.onclick = this.showMonthDropDown;
+    this.calendarMonthTxt = document.createElement("SPAN");
+    this.calendarMonthTxt.innerHTML = this.Config.monthLong[this.inputDate.getMonth()];
+    B.appendChild(this.calendarMonthTxt);
+    this.topBar.appendChild(B);
+    B.style.width = "93px";
+    B.style.marginRight = "0px";
+    B.style.height = "12px";
+    var F = document.createElement("IMG");
+    F.src = this.Config.imagePath + this.Config.calendarImages[3];
+    F.title = this.Config.txtSlctMonth;
+    F.alt = this.Config.txtSlctMonth; F.style.styleFloat = "";
+    F.style.marginLeft = "3px";
+    B.appendChild(F);
+    B.className = "selectBox";
+    if (this.Opera || this.iCab) {
+        F.style.cssText = "float: right; position: relative";
+        F.style.position = "relative";
+        F.style.styleFloat = "right"
+    }
+    this.monthPicker = document.createElement("DIV");
+    this.monthPicker.style.left = "42px";
+    this.monthPicker.style.top = B.offsetTop + B.offsetHeight + 1 + "px";
+    this.monthPicker.style.width = "90px";
+    this.monthPicker.style.display = "none";
+    this.monthPicker.className = "monthYearPicker";
+    this.monthPicker.id = "monthDropDown";
+    this.monthPicker.onclick = function() {
+        document.body.onclick = function() { bodyHideCalendar(); }
+    };
+    this.calendarDiv.appendChild(this.monthPicker);
+    var C = document.createElement("DIV");
+    C.onclick = this.showYearDropDown;
+    this.calendarYearTxt = document.createElement("SPAN");
+    this.calendarYearTxt.innerHTML = this.inputDate.getFullYear();
+    C.appendChild(this.calendarYearTxt);
+    this.topBar.appendChild(C);
+    C.style.width = "49px";
+    C.style.height = "12px";
+    var E = document.createElement("IMG");
+    E.src = this.Config.imagePath + this.Config.calendarImages[3];
+    E.title = this.Config.txtSlctYear;
+    E.alt = this.Config.txtSlctYear;
+    E.style.styleFloat = "right";
+    E.style.marginLeft = "3px";
+    C.appendChild(E);
+    C.className = "selectBox";
+    if (this.Opera || this.iCab) {
+        C.style.width = "30px";
+        E.style.cssText = "float: right";
+        E.style.position = "relative";
+        E.style.styleFloat = "right"
+    }
+    this.yearPicker = document.createElement("DIV");
+    this.yearPicker.style.left = "140px";
+    this.yearPicker.style.top = B.offsetTop + B.offsetHeight + 1 + "px";
+    this.yearPicker.style.display = "none";
+    this.yearPicker.style.width = "48px";
+    this.yearPicker.className = "monthYearPicker";
+    this.yearPicker.id = "yearDropDown";
+    this.yearPicker.onclick = function() {
+        document.body.onclick = function() { bodyHideCalendar(); }
+    };
+    this.calendarDiv.appendChild(this.yearPicker);
+    var D = document.createElement("IMG");
+    D.src = this.Config.imagePath + this.Config.calendarImages[2];
+    D.title = this.Config.txtClose;
+    D.alt = this.Config.txtClose;
+    D.className = "pointer";
+    D.style.styleFloat = "right";
+    D.onclick = this.closeCalendar;
+    this.topBar.appendChild(D);
+    if (!document.all) {
+        D.style.position = "absolute";
+        D.style.right = "2px"
+    }
+    this.calendarContent = document.createElement("DIV");
+    this.calendarDiv.appendChild(this.calendarContent)
+};
+EKCalendar.updateMonths = function(B) {
+    this.purge(B);
+    B.innerHTML = "";
+    var D = 0;
+    var C = this.Config.monthLong.length;
+    if (this.outputDate.getFullYear() <= this.startDate.getFullYear()) { D = this.startDate.getMonth() }
+    if (this.outputDate.getFullYear() >= this.endDate.getFullYear()) { C = this.endDate.getMonth() + 1 }
+    for (; D < C; D++) {
+        var A = document.createElement("DIV");
+        A.innerHTML = this.Config.monthLong[D];
+        A.onmouseover = this.highlightMonthYear;
+        A.onmouseout = this.highlightMonthYear;
+        A.onclick = this.selectMonth;
+        //              A.onclick=function() {
+
+        //              this.selectMonth;
+        //              document.body.onclick = function() { bodyHideCalendar(); }
+        //              };
+        A.id = "month_" + D;
+        A.onselectstart = this.cancelEvent;
+
+        B.appendChild(A)
+    } 
+};
+EKCalendar.updateYears = function(C) {
+    this.purge(C);
+    C.innerHTML = "";
+    var A = this.startDate.getFullYear();
+    var E = this.endDate.getFullYear() - this.startDate.getFullYear() + 1;
+    for (var D = A; D < (A + E); D++) {
+        var B = document.createElement("DIV");
+        B.innerHTML = D;
+        B.onmouseover = this.highlightMonthYear;
+        B.onmouseout = this.highlightMonthYear;
+        B.onclick = this.selectYear;
+        B.onselectstart = this.cancelEvent;
+        C.appendChild(B)
+    }
+};
+EKCalendar.highlightMonthYear = function() {
+    switch (this.className) {
+        case "monthYearActive": this.className = "";
+            break;
+        case "monthYearSelected": this.className = "monthYearSelected monthYearActive";
+            break;
+        case "monthYearSelected monthYearActive": this.className = "monthYearSelected";
+            break;
+        default: this.className = "monthYearActive"
+    }
+};
+EKCalendar.showMonthDropDown = function() {
+    if (!EKCalendar.isHidden(EKCalendar.monthPicker)) {
+        EKCalendar.hideItem(EKCalendar.monthPicker)
+    }
+    else {
+        EKCalendar.showItem(EKCalendar.monthPicker);
+        EKCalendar.hideItem(EKCalendar.yearPicker)
+    } 
+};
+EKCalendar.showYearDropDown = function() {
+    if (!EKCalendar.isHidden(EKCalendar.yearPicker)) {
+        EKCalendar.hideItem(EKCalendar.yearPicker)
+    }
+    else {
+        EKCalendar.showItem(EKCalendar.yearPicker);
+        EKCalendar.hideItem(EKCalendar.monthPicker)
+    }
+};
+EKCalendar.selectMonth = function() {
+    document.body.onclick = function() { bodyHideCalendar(); }
+    EKCalendar.calendarMonthTxt.innerHTML = this.innerHTML;
+    EKCalendar.hideItem(EKCalendar.monthPicker);
+    EKCalendar.outputDate.setDate(1);
+    EKCalendar.outputDate.setMonth(this.id.replace(/[^\d]/g, ""));
+    EKCalendar.writeCalendarContent()
+
+
+};
+EKCalendar.selectYear = function() {
+    document.body.onclick = function() { bodyHideCalendar(); }
+    EKCalendar.calendarYearTxt.innerHTML = this.innerHTML;
+    EKCalendar.hideItem(EKCalendar.yearPicker);
+    EKCalendar.outputDate.setFullYear(this.innerHTML.replace(/[^\d]/g, ""));
+    EKCalendar.outputDate.setDate(1);
+    if (EKCalendar.outputDate < EKCalendar.startDate) {
+        EKCalendar.outputDate.setTime(EKCalendar.startDate.getTime())
+    }
+    if (EKCalendar.outputDate > EKCalendar.endDate) {
+        EKCalendar.outputDate.setFullYear(EKCalendar.endDate.getFullYear());
+        EKCalendar.outputDate.setDate(1);
+        EKCalendar.outputDate.setMonth(EKCalendar.endDate.getMonth());
+    }
+    EKCalendar.updateMonths(EKCalendar.monthPicker);
+    EKCalendar.writeCalendarContent()
+};
+EKCalendar.switchMonth = function() {
+    var A = EKCalendar.outputDate.getFullYear();
+    EKCalendar.outputDate.setDate(1);
+    if (this.src.indexOf("left") >= 0) {
+        if (EKCalendar.outputDate.getMonth() === 0) {
+            EKCalendar.outputDate.setYear(A - 1);
+            EKCalendar.outputDate.setMonth(11)
+        } else {
+            EKCalendar.outputDate.setMonth(EKCalendar.outputDate.getMonth() - 1)
+        }
+    }
+    else {
+        if (EKCalendar.outputDate.getMonth() == 11) {
+            EKCalendar.outputDate.setYear(A + 1);
+            EKCalendar.outputDate.setMonth(0)
+        }
+        else {
+            EKCalendar.outputDate.setMonth(EKCalendar.outputDate.getMonth() + 1)
+        }
+    }
+    if (A != EKCalendar.outputDate.getFullYear()) {
+        EKCalendar.updateMonths(EKCalendar.monthPicker)
+    }
+    EKCalendar.writeCalendarContent()
+};
+EKCalendar.updateButtons = function() {
+    var A = this.prevMonthButton;
+    var B = this.nextMonthButton;
+    if ((this.outputDate.getFullYear() <= this.startDate.getFullYear()) && this.outputDate.getMonth() <= this.startDate.getMonth()) {
+        A.firstChild.src = this.Config.imagePath + this.Config.calendarImages[4];
+        A.className = "arrow";
+        A.firstChild.onclick = null;
+        A.firstChild.title = "";
+        A.firstChild.alt = ""
+    }
+    else {
+        A.firstChild.src = this.Config.imagePath + this.Config.calendarImages[0];
+        A.className = "pointer";
+        A.firstChild.onclick = this.switchMonth;
+        A.firstChild.title = this.Config.txtPrevMonth;
+        A.firstChild.alt = this.Config.txtPrevMonth
+    }
+    if (this.outputDate.getFullYear() >= this.endDate.getFullYear() && this.outputDate.getMonth() >= this.endDate.getMonth()) {
+        B.firstChild.src = this.Config.imagePath + this.Config.calendarImages[5];
+        B.className = "arrow";
+        B.firstChild.onclick = null;
+        B.firstChild.title = "";
+        B.firstChild.alt = ""
+    }
+    else {
+        B.firstChild.src = this.Config.imagePath + this.Config.calendarImages[1];
+        B.className = "pointer";
+        B.firstChild.onclick = this.switchMonth;
+        B.firstChild.title = this.Config.txtNextMonth;
+        B.firstChild.alt = this.Config.txtNextMonth
+    }
+};
+EKCalendar.updateHighlights = function() {
+    for (var C = 0; C < this.yearPicker.childNodes.length; C++) {
+        var A = this.yearPicker.childNodes[C];
+        A.className = "";
+        if (A.innerHTML == this.outputDate.getFullYear()) {
+            A.className = "monthYearSelected"
+        }
+    }
+    for (var B = 0; B < this.monthPicker.childNodes.length; B++) {
+        var D = this.monthPicker.childNodes[B];
+        D.className = "";
+        if (D.id == "month_" + this.outputDate.getMonth()) {
+            D.className = "monthYearSelected"
+        }
+    }
+};
+EKCalendar.highlightDay = function(A) {
+    switch (A.className) {
+        case "activeDay": A.className = "activeDayOver";
+            break;
+        case "activeDayOver": A.className = "activeDay";
+            break;
+        case "Day pointer": A.className = "DayOver pointer";
+            break;
+        case "Day arrow": A.className = "DayOver arrow";
+            break;
+        case "DayOver pointer": A.className = "Day pointer";
+            break;
+        case "DayOver arrow": A.className = "Day arrow";
+            break
+    }
+};
+EKCalendar.closeCalendar = function() {
+    EKCalendar.monthPicker.style.display = "none";
+    EKCalendar.yearPicker.style.display = "none";
+    EKCalendar.calendarDiv.style.display = "none";
+    if (EKCalendar.iframe) { EKCalendar.iframe.style.display = "none" }
+};
+EKCalendar.writeCalendarContent = function() {
+    var F = '<table width="100%" cellspacing="0"><tbody><tr>';
+    for (var E = 0; E < this.Config.dayShort.length; E++) {
+        F += '<td class="daysBar">' + this.Config.dayShort[E] + "</td>"
+    }
+    F += "</tr>";
+    this.calendarMonthTxt.innerHTML = this.Config.monthLong[this.outputDate.getMonth()];
+    var I = new Date();
+    I.setTime(this.outputDate.getTime());
+    I.setDate(1);
+    var C = I.getDay();
+    C = (7 - (this.Config.firstDay - C)) % 7;
+
+    this.calendarYearTxt.innerHTML = this.outputDate.getFullYear();
+    F += "<tr>"; for (var D = 0; D < C; D++) {
+        F += '<td class="inActiveDay">&nbsp;</td>'
+    }
+    var K = C;
+    var A = this.Config.monthDays[this.outputDate.getMonth()];
+    if (A == 28) {
+        if (this.leapYear(this.outputDate.getFullYear()))
+        { A = 29 }
+    }
+    var H = 0;
+    var G = 1;
+    var B = A;
+    // alert(this.outputDate.getFullYear());
+
+    if (this.outputDate.getFullYear() <= this.startDate.getFullYear() && this.outputDate.getMonth() <= this.startDate.getMonth()) {
+        G = this.startDate.getDate()
+    }
+    if (this.outputDate.getFullYear() >= this.endDate.getFullYear() && this.outputDate.getMonth() >= this.endDate.getMonth()) {
+        B = this.endDate.getDate()
+    }
+    if (this.outputDate.getFullYear() == this.inputDate.getFullYear() && this.outputDate.getMonth() == this.inputDate.getMonth()) {
+
+        H = this.inputDate.getDate()
+    }
+    //  alert('G');
+    // alert(G);
+    // alert('B');
+    //  alert(B);
+    //    alert('H');
+    //   alert(H);
+
+    for (var J = 1; J <= A; J++) {
+        if (K > 0 && K % 7 === 0)
+        { F += "</tr><tr>" }
+        if (J >= G && J <= B) {
+            if (J == H) {
+                //alert('activeDay');
+                //alert(J);
+                F += '<td id="day_' + J + '" class="activeDay" onmouseover="EKCalendar.highlightDay(this);" onmouseout="EKCalendar.highlightDay(this);" onclick="EKCalendar.pickDate(this);">' + J + "</td>"
+            }
+            else {
+                //alert('Day pointer');
+                //alert(J);
+                F += '<td id="day_' + J + '" class="Day pointer" onmouseover="EKCalendar.highlightDay(this);" onmouseout="EKCalendar.highlightDay(this);" onclick="EKCalendar.pickDate(this);">' + J + "</td>"
+            }
+        }
+        else {
+            //alert('inActiveDay arrow');
+            //alert(J);
+            F += '<td id="day_' + J + '" class="inActiveDay arrow">' + J + "</td>"
+        }
+        K++
+    }
+    F += "</tr></tbody></table>";
+    this.calendarContent.innerHTML = F;
+    if (!document.all) {
+        this.topBar.style.top = "";
+        this.topBar.style.bottom = "0px"
+    }
+    if (this.iframe) {
+        setTimeout("EKCalendar.resizeIframe();", 10)
+    }
+    this.updateButtons();
+    this.updateHighlights()
+};
+EKCalendar.resizeIframe = function() {
+    this.iframe.style.width = this.calendarDiv.offsetWidth + "px";
+    this.iframe.style.height = this.calendarDiv.offsetHeight + "px"
+};
+EKCalendar.pickDate = function(A) {
+
+    //																												    /*Addded by snehal for Web2.0 forms*/
+    //																												    var txtDOBId = EKCalendar.returnDateTo.id;
+    //																												    var ParentTagName = $('#' + txtDOBId).parent().get(0).tagName;
+    //																												    if (ParentTagName == "div" || ParentTagName == "Div" || ParentTagName == "DIV") {
+    //																												        var ParentClassName = $('#' + txtDOBId).parent("div").attr("class");
+    //																												        if (ParentClassName == "dvTxtBotBg90Error") {
+    //																												            ChangeTboxOutlineBlue(txtDOBId);
+    //																												           
+
+    //																												        }
+    //																												    }
+
+
+    //																												    /*Addded by snehal for Web2.0 forms*/
+
+
+
+    EKCalendar.outputDate.setDate(A.id.replace(/[^\d]/g, ""));
+    if (EKCalendar.outputDate.getFullYear() >= 2000) {
+        EKCalendar.returnDateTo.value = EKCalendar.padLeft(EKCalendar.outputDate.getDate(), "0", 2) + "-" + EKCalendar.Config.monthShort[EKCalendar.outputDate.getMonth()] + "-" + EKCalendar.padLeft(EKCalendar.outputDate.getFullYear(), "0", 4); //alert("Sai : " + EKCalendar.outputDate.getFullYear());// Kapil 1900 > 2000
+
+    }
+    else {
+        EKCalendar.returnDateTo.value = EKCalendar.padLeft(EKCalendar.outputDate.getDate(), "0", 2) + "-" + EKCalendar.Config.monthShort[EKCalendar.outputDate.getMonth()] + "-" + EKCalendar.padLeft(EKCalendar.outputDate.getFullYear(), "0", 4); //alert("Sai : " + EKCalendar.outputDate.getFullYear());// Kapil 1900 > 2000
+
+    }
+    if (EKCalendar.dependentDateTo) {
+        EKCalendar.outputDate.setDate(EKCalendar.outputDate.getDate() + EKCalendar.dependentDaysDiff);
+        if (EKCalendar.outputDate > EKCalendar.endDate) {
+            EKCalendar.outputDate.setDate(EKCalendar.endDate.getDate())
+        }
+        if (EKCalendar.outputDate < EKCalendar.startDate) {
+            EKCalendar.outputDate.setDate(EKCalendar.startDate.getDate())
+        }
+        EKCalendar.dependentDateTo.value = EKCalendar.padLeft(EKCalendar.outputDate.getDate(), "0", 2) + "-" + EKCalendar.Config.monthShort[EKCalendar.outputDate.getMonth()] + "-" + EKCalendar.padLeft(EKCalendar.outputDate.getFullYear(), "0", 4) // Kapil 1900 > 2000
+    }
+    EKCalendar.closeCalendar()
+};
+EKCalendar.positionCalendar = function(D) {
+    var G = this.findPos(this.returnDateTo);
+    var A = this.getScrollPosition();
+    var C = this.getWindowSize();
+    var F = G.x;
+    var B = G.y + this.returnDateTo.offsetHeight + 2;
+    var E = this.calendarDiv;
+    if ((E.offsetHeight + B) > (A.y + C.height)) {
+        window.scrollTo(A.x, A.y + (E.offsetHeight + B) - (A.y + C.height) + 25)
+    }
+    if (EKCalendar.Config.maxScreen !== 0 && C.width > EKCalendar.Config.maxScreen) {
+        C.width = EKCalendar.Config.maxScreen + (document.body.clientWidth - EKCalendar.Config.maxScreen) / 2
+    }
+    if ((E.offsetWidth + F + 20) > (A.x + C.width)) {
+        F = G.x + this.returnDateTo.offsetWidth - E.offsetWidth
+    }
+    var temURL = document.location.href;
+    var ind = "";
+    var cntyCode = "";
+    if (temURL.indexOf('.com/') > -1) {
+        ind = temURL.indexOf('.com/') + 5;
+    }
+    else {
+        ind = temURL.indexOf('/', 7) + 1;
+    }
+    cntyCode = temURL.substr(ind, 2);
+    cntyCode.toUpperCase();
+    if (cntyCode === "/AR" || cntyCode === "AR") {
+        this.calendarDiv.style.left = F + D - 120 + "px";
+    }
+    else {
+        this.calendarDiv.style.left = F + D + 100 + "px";
+    }
+    this.calendarDiv.style.top = B + "px";
+    if (this.iframe) {
+        //																														document.getElementById("calendarFrameSet").style.left = this.calendarDiv.style.left;
+        //																														document.getElementById("calendarFrameSet").style.border="10px solid #ff0000";
+        //																														document.getElementById("calendarFrameSet").style.top = this.calendarDiv.style.top;
+        //																														document.getElementById("calendarFrameSet").style.width = this.calendarDiv.clientWidth;
+        //																														alert(this.calendarDiv.clientHeight);
+        //																														document.getElementById("calendarFrameSet").style.height = this.calendarDiv.clientHeight;
+        this.iframe.style.left = this.calendarDiv.style.left;
+        this.iframe.style.top = this.calendarDiv.style.top;
+    }
+};
+EKCalendar.configure();
+EKCalendar.Config.monthLong = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+EKCalendar.Config.monthShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+EKCalendar.Config.dayShort = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+EKCalendar.Config.firstDay = 1;
+EKCalendar.Config.monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+EKCalendar.Config.imagePath = '/App_Themes/Default/Img/Calendar/';
+EKCalendar.preloadImages();
+
+//Copied form Calender_jetairways
+function shn_showtool(B) {
+    var A = document.getElementById(B);
+    A.style.display = "block"
+}
+
+function shn_hidetool(B) {
+    var A = document.getElementById(B);
+    A.style.display = "none"
+}
+Y™2À*      TUmùTUkÍ;:TV¼Ú   7:http://www.jetairways.com/Scripts/Calendar/calendar.js request-method GET response-head HTTP/1.1 200 OK
+Content-Type: application/javascript
+Last-Modified: Mon, 07 Apr 2014 11:21:50 GMT
+Accept-Ranges: bytes
+Server: Microsoft-IIS/8.5
+X-Powered-By: ASP.NET
+Content-Length: 35048
+Cache-Control: max-age=86400
+Date: Sat, 01 Nov 2014 23:23:06 GMT
+ uncompressed-len 0   ˆè

@@ -1,0 +1,558 @@
+var ddlevelsmenu={
+
+downarrowpointer: ["/App_Themes/Default/Img/Menu/arrow-down.gif", 0,0], //path to "down arrow" image that gets added to main menu items (last 2 parameters should be width/height of img)
+rightarrowpointer: ["/App_Themes/Default/Img/Menu/menu_rhtarrow.gif", 4,7], //path to "right arrow" image that gets added to LI elements within drop down menu containing additional menus
+hideinterval: 0, //delay in milliseconds before sub menu(s) disappears onmouseout.
+httpsiframesrc: "blank.htm", //If menu is run on a secure (https) page, the IFRAME shim feature used by the script should point to an *blank* page *within* the secure area to prevent an IE security prompt. Specify full URL to that page on your server (leave as is if not applicable).
+
+///No need to edit beyond here////////////////////
+
+topmenuids: [], //array containing ids of all the primary menus on the page
+topitems: {}, //object array containing all top menu items
+subuls: {}, //object array containing all ULs
+topitemsindex: -1,
+ulindex: -1,
+hidetimers: {}, //object array timer
+shimadded: false,
+
+getoffset:function(what, offsettype){
+	return (what.offsetParent)? what[offsettype]+this.getoffset(what.offsetParent, offsettype) : what[offsettype]
+},
+
+getoffsetof:function(el){
+	el._offsets={left:this.getoffset(el, "offsetLeft"), top:this.getoffset(el, "offsetTop")}
+},
+
+getwindowsize:function(){
+	this.docwidth=window.innerWidth? window.innerWidth-10 : this.standardbody.clientWidth-10
+	this.docheight=window.innerHeight? window.innerHeight-15 : this.standardbody.clientHeight-18
+},
+
+gettopitemsdimensions:function(){
+	for (var m=0; m<this.topmenuids.length; m++){
+		var topmenuid=this.topmenuids[m]
+		for (var i=0; i<this.topitems[topmenuid].length; i++){
+			var header=this.topitems[topmenuid][i]
+			var submenu=document.getElementById(header.parentNode.getAttribute('rel'))
+			header._dimensions={w:header.offsetWidth, h:header.offsetHeight, submenuw:submenu.offsetWidth, submenuh:submenu.offsetHeight}
+		}
+	}
+},
+
+isContained:function(mm, ee){
+	var em=window.event || ee
+	var cc=ee.relatedTarget || ((ee.type=="mouseover")? ee.fromElement : ee.toElement)
+	var dd=ee.relatedTarget || ((ee.type=="click")? ee.fromElement : ee.toElement)
+	while (cc && cc!=mm)try {cc=cc.parentNode} catch(ee){cc=mm}
+	if (cc==mm)
+		return true
+	else
+		return false
+
+while (dd && dd!=mm)try {dd=dd.parentNode} catch(ee){dd=mm}
+	if (dd==mm)
+		return true
+	else
+		return false
+},
+
+addpointer:function(target, imgclass, imginfo){
+	var pointer=document.createElement("img")
+	pointer.src=imginfo[0]
+	pointer.style.width=imginfo[1]+"px"
+	pointer.style.height=imginfo[2]+"px"
+	pointer.className=imgclass
+	target.appendChild(pointer)
+},
+
+css:function(el, targetclass, action){
+	var needle=new RegExp("(^|\\s+)"+targetclass+"($|\\s+)", "ig")
+	if (action=="check")
+		return needle.test(el.className)
+	else if (action=="remove")
+		el.className=el.className.replace(needle, "")
+	else if (action=="add" && !needle.test(el.className))
+		el.className+=" "+targetclass
+},
+
+addshimmy:function(target){
+	var shim=(!window.opera)? document.createElement("iframe") : document.createElement("div") //Opera 9.24 doesnt seem to support transparent IFRAMEs
+	shim.className="ddiframeshim"
+	shim.setAttribute("src", location.protocol=="https:"? this.httpsiframesrc : "about:blank")
+	shim.setAttribute("frameborder", "0")
+	target.appendChild(shim)
+	try{
+		shim.style.filter='progid:DXImageTransform.Microsoft.Alpha(style=0,opacity=0)'
+	}
+	catch(e){}
+	return shim
+},
+
+positionshim:function(header, submenu, dir, scrollX, scrollY){
+	if (header._istoplevel){
+	
+	 
+		var scrollY=window.pageYOffset? window.pageYOffset : this.standardbody.scrollTop
+		var topgap=header._offsets.top-scrollY
+		var bottomgap=scrollY+this.docheight-header._offsets.top-header._dimensions.h
+		if (topgap>0){
+			this.shimmy.topshim.style.border="10px solid #ff0000";
+			this.shimmy.topshim.style.left=scrollX+"px"
+			this.shimmy.topshim.style.top=scrollY+"px"
+			this.shimmy.topshim.style.width="99%"
+			this.shimmy.topshim.style.height=topgap+"px" //distance from top window edge to top of menu item
+		}
+		if (bottomgap>0){
+			this.shimmy.bottomshim.style.left=scrollX+"px"
+			this.shimmy.bottomshim.style.top=header._offsets.top + header._dimensions.h +"px"
+			this.shimmy.bottomshim.style.width="99%"
+			this.shimmy.bottomshim.style.height=bottomgap+"px" //distance from bottom of menu item to bottom window edge
+		}
+	}
+},
+
+hideshim:function(){
+//	this.shimmy.topshim.style.width=this.shimmy.bottomshim.style.width=0
+//	this.shimmy.topshim.style.height=this.shimmy.bottomshim.style.height=0
+},
+
+
+buildmenu:function(mainmenuid, header, submenu, submenupos, istoplevel, dir){
+        if (document.getElementById("iframe")) {
+	document.getElementById("iframe").style.left="-"+1000+"px";
+	document.getElementById("iframe").style.display="none";
+            document.getElementById("iframe").style.width = 0 + "px";
+            document.getElementById("iframe").style.height = 0 + "px";
+	if(document.getElementById("iframeSub"))
+	{
+	document.getElementById("iframeSub").style.top="-1000px"; // Kapil	
+	document.getElementById("iframeSub").style.display="none"; // Kapil
+        }
+	}
+	header._master=mainmenuid //Indicate which top menu this header is associated with
+	header._pos=submenupos //Indicate pos of sub menu this header is associated with
+	header._istoplevel=istoplevel
+	if (istoplevel){
+		this.addEvent(header, function(e){
+		//ddlevelsmenu.hidemenu(ddlevelsmenu.subuls[this._master][parseInt(this._pos)])
+			var submenu=ddlevelsmenu.subuls[this._master][parseInt(this._pos)]
+			ddlevelsmenu.getoffsetof(header)
+			var scrollX=window.pageXOffset? window.pageXOffset : ddlevelsmenu.standardbody.scrollLeft
+			var scrollY=window.pageYOffset? window.pageYOffset : ddlevelsmenu.standardbody.scrollTop
+			var submenurightedge=this._offsets.left + this._dimensions.submenuw + (this._istoplevel && dir=="topbar"? 0 : this._dimensions.w)
+			var submenubottomedge=this._offsets.top + this._dimensions.submenuh
+			//Sub menu starting left position
+			var menuleft=(this._istoplevel? this._offsets.left + (dir=="sidebar"? this._dimensions.w : 0) : this._dimensions.w)
+			if (submenurightedge-scrollX>ddlevelsmenu.docwidth){
+				menuleft+= -this._dimensions.submenuw + (this._istoplevel && dir=="topbar" ? this._dimensions.w : -this._dimensions.w)
+			}
+			submenu.style.left=menuleft+"px"
+			
+
+
+			//Sub menu starting top position 
+			var menutop=(this._istoplevel? this._offsets.top + (dir=="sidebar"? 0 : this._dimensions.h) : this.offsetTop)
+
+ 
+			submenu.style.top=menutop-1+"px"			
+			submenu.style.zIndex="10000000";/*10000000*/
+			submenu.style.visibility="visible"
+
+			if(BrowserDetect.browser=="Explorer" && BrowserDetect.version<="6")
+				{
+						setIframe(submenu,menuleft,menutop);
+				}
+
+
+	/*added by snehal for menu shifing upwards on click ends for IE 8 NJP-1393*/
+		
+		
+		
+		
+		
+		}, "click")
+	}
+	this.subuls[mainmenuid][submenupos]=submenu
+	header._dimensions={w:header.offsetWidth, h:header.offsetHeight, submenuw:submenu.offsetWidth, submenuh:submenu.offsetHeight}
+	this.getoffsetof(header)
+	submenu.style.left=0
+	submenu.style.top=0
+	submenu.style.visibility="hidden"
+	this.addEvent(header, function(e){ //mouseover event
+
+    if(document.getElementById("hplnkSelectCountry")!=null)
+    {
+        
+        document.getElementById("hplnkSelectCountry").focus();
+        
+        document.getElementById("hplnkSelectCountry").style.outline="none";
+        
+     }
+	
+	
+		if (!ddlevelsmenu.isContained(this, e)){
+			if (typeof ddlevelsmenu.hidetimers[this._master][parseInt(this._pos)]!="undefined")
+				clearTimeout(ddlevelsmenu.hidetimers[this._master][parseInt(this._pos)])
+			if (this._istoplevel)
+				ddlevelsmenu.css(this, "selected", "add")
+			var submenu=ddlevelsmenu.subuls[this._master][parseInt(this._pos)]
+			ddlevelsmenu.getoffsetof(header)
+			var scrollX=window.pageXOffset? window.pageXOffset : ddlevelsmenu.standardbody.scrollLeft
+			var scrollY=window.pageYOffset? window.pageYOffset : ddlevelsmenu.standardbody.scrollTop
+			var submenurightedge=this._offsets.left + this._dimensions.submenuw + (this._istoplevel && dir=="topbar"? 0 : this._dimensions.w)
+			var submenubottomedge=this._offsets.top + this._dimensions.submenuh
+			//Sub menu starting left position
+			var menuleft=(this._istoplevel? this._offsets.left + (dir=="sidebar"? this._dimensions.w : 0) : this._dimensions.w)
+			if (submenurightedge-scrollX>ddlevelsmenu.docwidth){
+				menuleft+= -this._dimensions.submenuw + (this._istoplevel && dir=="topbar" ? this._dimensions.w : -this._dimensions.w)
+			}
+			submenu.style.left=menuleft+"px"
+
+
+			//Sub menu starting top position 
+			var menutop=(this._istoplevel? this._offsets.top + (dir=="sidebar"? 0 : this._dimensions.h) : this.offsetTop)
+// Kapil has commented this code Start // Menu going to the top if no space to display whole menu
+/*			if (submenubottomedge-scrollY>ddlevelsmenu.docheight){ //no room downwards?
+				if (this._dimensions.submenuh<this._offsets.top+(dir=="sidebar"? this._dimensions.h : 0)-scrollY){ //move up?
+					menutop+= - this._dimensions.submenuh + (this._istoplevel && dir=="topbar"? -this._dimensions.h : this._dimensions.h)
+				}
+				else{ //top of window edge
+				menutop+= -(this._offsets.top-scrollY) + (this._istoplevel && dir=="topbar"? -this._dimensions.h : 0)
+				}
+			}*/
+// Kapil has commented this code End
+ 
+			submenu.style.top=menutop-1+"px"			
+			submenu.style.zIndex="9900";/*10000000*/
+			//ddlevelsmenu.positionshim(this, submenu, dir, scrollX, scrollY) // Kapil Commented this line
+
+			submenu.style.visibility="visible"
+
+			if(BrowserDetect.browser=="Explorer" && BrowserDetect.version<="6")
+				{
+						setIframe(submenu,menuleft,menutop);
+				}
+}
+	}, "mouseover")
+
+this.addEvent(header, function(e){ //mouseover event
+		if (!ddlevelsmenu.isContained(this, e)){
+			if (typeof ddlevelsmenu.hidetimers[this._master][parseInt(this._pos)]!="undefined")
+				clearTimeout(ddlevelsmenu.hidetimers[this._master][parseInt(this._pos)])
+			if (this._istoplevel)
+				ddlevelsmenu.css(this, "selected", "add")
+			var submenu=ddlevelsmenu.subuls[this._master][parseInt(this._pos)]
+			ddlevelsmenu.getoffsetof(header)
+			var scrollX=window.pageXOffset? window.pageXOffset : ddlevelsmenu.standardbody.scrollLeft
+			var scrollY=window.pageYOffset? window.pageYOffset : ddlevelsmenu.standardbody.scrollTop
+			var submenurightedge=this._offsets.left + this._dimensions.submenuw + (this._istoplevel && dir=="topbar"? 0 : this._dimensions.w)
+			var submenubottomedge=this._offsets.top + this._dimensions.submenuh
+			//Sub menu starting left position
+			var menuleft=(this._istoplevel? this._offsets.left + (dir=="sidebar"? this._dimensions.w : 0) : this._dimensions.w)
+			if (submenurightedge-scrollX>ddlevelsmenu.docwidth){
+				menuleft+= -this._dimensions.submenuw + (this._istoplevel && dir=="topbar" ? this._dimensions.w : -this._dimensions.w)
+			}
+			submenu.style.left=menuleft+"px"
+			//Sub menu starting top position
+			var menutop=(this._istoplevel? this._offsets.top + (dir=="sidebar"? 0 : this._dimensions.h) : this.offsetTop)
+			if (submenubottomedge-scrollY>ddlevelsmenu.docheight){ //no room downwards?
+				if (this._dimensions.submenuh<this._offsets.top+(dir=="sidebar"? this._dimensions.h : 0)-scrollY){ //move up?
+					menutop+= - this._dimensions.submenuh + (this._istoplevel && dir=="topbar"? -this._dimensions.h : this._dimensions.h)
+				}
+				else{ //top of window edge
+					menutop+= -(this._offsets.top-scrollY) + (this._istoplevel && dir=="topbar"? -this._dimensions.h : 0)
+				}
+			}
+ 		
+ 		
+			submenu.style.top = menutop - 1 + "px"		
+			submenu.style.zIndex="1";
+			//ddlevelsmenu.positionshim(this, submenu, dir, scrollX, scrollY) // Kapil Commented this line
+			submenu.style.visibility="visible"
+		}
+	}, "click")
+	
+	
+	
+	/*click event starts*/
+	
+	this.addEvent(header, function(e){ //click event
+	
+	//document.getElementById("iframe").style.display="none";	
+	
+	/*added by snehal for menu shifing upwards on click starts for browsers except IE8 NJP-1393*/
+	
+			if (!ddlevelsmenu.isContained(this, e)){
+			if (typeof ddlevelsmenu.hidetimers[this._master][parseInt(this._pos)]!="undefined")
+				clearTimeout(ddlevelsmenu.hidetimers[this._master][parseInt(this._pos)])
+			if (this._istoplevel)
+				ddlevelsmenu.css(this, "selected", "add")
+			var submenu=ddlevelsmenu.subuls[this._master][parseInt(this._pos)]
+			ddlevelsmenu.getoffsetof(header)
+			var scrollX=window.pageXOffset? window.pageXOffset : ddlevelsmenu.standardbody.scrollLeft
+			var scrollY=window.pageYOffset? window.pageYOffset : ddlevelsmenu.standardbody.scrollTop
+			var submenurightedge=this._offsets.left + this._dimensions.submenuw + (this._istoplevel && dir=="topbar"? 0 : this._dimensions.w)
+			var submenubottomedge=this._offsets.top + this._dimensions.submenuh
+			//Sub menu starting left position
+			var menuleft=(this._istoplevel? this._offsets.left + (dir=="sidebar"? this._dimensions.w : 0) : this._dimensions.w)
+			if (submenurightedge-scrollX>ddlevelsmenu.docwidth){
+				menuleft+= -this._dimensions.submenuw + (this._istoplevel && dir=="topbar" ? this._dimensions.w : -this._dimensions.w)
+			}
+			submenu.style.left=menuleft+"px"
+			
+
+
+			//Sub menu starting top position 
+			var menutop=(this._istoplevel? this._offsets.top + (dir=="sidebar"? 0 : this._dimensions.h) : this.offsetTop)
+
+ 
+			submenu.style.top=menutop-1+"px"			
+			submenu.style.zIndex="10000000";/*10000000*/
+			submenu.style.visibility="visible"
+
+			if(BrowserDetect.browser=="Explorer" && BrowserDetect.version<="6")
+				{
+						setIframe(submenu,menuleft,menutop);
+				}
+  }
+
+  /*added by snehal for menu shifing upwards on click ends for browsers except IE8 NJP-1393*/	
+		
+	}, "click")
+
+	
+	/* click event ends*/
+	
+	
+	
+	
+	
+	
+	
+
+	this.addEvent(header, function(e){ //mouseout event
+	
+		if (this._istoplevel){
+			var submenu=ddlevelsmenu.subuls[this._master][parseInt(this._pos)]
+			if (!ddlevelsmenu.isContained(this, e) && !ddlevelsmenu.isContained(submenu, e)) //hide drop down ul if mouse moves out of menu bar item but not into drop down ul itself
+				ddlevelsmenu.hidemenu(submenu)
+                    if(document.getElementById("iframe"))
+				document.getElementById("iframe").style.display="none";
+		}
+		else if (!this._istoplevel && !ddlevelsmenu.isContained(this, e)){
+			var headerlist=this
+			ddlevelsmenu.hidetimers[this._master][parseInt(this._pos)]=setTimeout(function(){
+				var submenu=ddlevelsmenu.subuls[headerlist._master][parseInt(headerlist._pos)]
+				ddlevelsmenu.hidemenu(submenu)
+			}, ddlevelsmenu.hideinterval)
+		}
+		
+	}, "mouseout")
+},
+
+hidemenu:function(submenu){
+	if (typeof submenu._pos!="undefined"){ //if submenu is outermost UL drop down menu
+		this.css(this.topitems[submenu._master][parseInt(submenu._pos)], "selected", "remove")
+		this.hideshim()
+}
+
+
+submenu.style.left=0
+	submenu.style.top="-1000px"
+	submenu.style.visibility="hidden"
+},
+
+
+addEvent:function(target, functionref, tasktype) {
+	if (target.addEventListener)
+		target.addEventListener(tasktype, functionref, false);
+	else if (target.attachEvent)
+		target.attachEvent('on'+tasktype, function(){return functionref.call(target, window.event)});
+},
+
+init:function(mainmenuid, dir){
+	this.standardbody=(document.compatMode=="CSS1Compat")? document.documentElement : document.body
+	this.topitemsindex=-1
+	this.ulindex=-1
+	this.topmenuids.push(mainmenuid)
+	this.topitems[mainmenuid]=[] //declare array on object
+	this.subuls[mainmenuid]=[] //declare array on object
+	this.hidetimers[mainmenuid]=[] //declare array on object
+	if (!this.shimadded){
+//		this.shimmy={}
+//		this.shimmy.topshim=this.addshimmy(document.body) //create top iframe shim obj
+//		this.shimmy.bottomshim=this.addshimmy(document.body) //create bottom iframe shim obj
+//		this.shimadded=true
+	}
+	var menubar=document.getElementById(mainmenuid)
+	var menuitems=menubar.getElementsByTagName("*")
+	this.getwindowsize()
+	for (var i=0; i<menuitems.length; i++){
+		if (menuitems[i].getAttribute('rel')){
+			this.topitemsindex++
+			this.ulindex++
+			var menulink=menuitems[i].getElementsByTagName("a")[0]
+			this.topitems[mainmenuid][this.topitemsindex]=menulink //store ref to main menu links
+			var dropul=document.getElementById(menuitems[i].getAttribute('rel'))
+			dropul.style.zIndex=2000 //give drop down menus a high z-index
+			dropul._master=mainmenuid  //Indicate which main menu this main UL is associated with
+			dropul._pos=this.topitemsindex //Indicate which main menu item this main UL is associated with
+			this.addEvent(dropul, function(){ddlevelsmenu.hidemenu(this)}, "click")
+			//var arrowpointer=(dir=="sidebar")? "rightarrowpointer" : "downarrowpointer"
+			//this.addpointer(menulink, arrowpointer, this[arrowpointer])
+			this.buildmenu(mainmenuid, menulink, dropul, this.ulindex, true, dir) //build top level menu
+			//dropul.onmouseover=function(){
+				//do nothing
+			//}
+			this.addEvent(dropul, function(e){ //hide menu if mouse moves out of main UL element into open space
+				if (!ddlevelsmenu.isContained(this, e) && !ddlevelsmenu.isContained(ddlevelsmenu.topitems[this._master][parseInt(this._pos)], e)){
+					var dropul=this
+					ddlevelsmenu.hidetimers[this._master][parseInt(this._pos)]=setTimeout(function(){
+						ddlevelsmenu.hidemenu(dropul)
+					}, ddlevelsmenu.hideinterval)
+				}
+                    if(document.getElementById("iframe"))
+				document.getElementById("iframe").style.display="none"; // Kapil
+				if(document.getElementById("iframeSub"))
+				{
+				document.getElementById("iframeSub").style.display="none"; // Kapil
+				}
+			}, "mouseout")
+			var subuls=dropul.getElementsByTagName("ul")
+			for (var c=0; c<subuls.length; c++){
+				this.ulindex++
+				var parentli=subuls[c].parentNode
+				this.addpointer(parentli.getElementsByTagName("a")[0], "rightarrowpointer", this.rightarrowpointer)
+				this.buildmenu(mainmenuid, parentli, subuls[c], this.ulindex, false, dir) //build sub level menus
+			}
+		}
+	} //end for loop
+//	this.addEvent(window, function(){ddlevelsmenu.getwindowsize(); ddlevelsmenu.gettopitemsdimensions()}, "resize")
+},
+
+setup:function(mainmenuid, dir){
+	this.addEvent(window, function(){ddlevelsmenu.init(mainmenuid, dir)}, "load")
+}
+
+}
+
+function setIframe(submenu,menuleft,menutop)
+{
+	if(BrowserDetect.browser=="Explorer" && BrowserDetect.version<="6")
+	{
+			document.getElementById("iframe").style.display="";
+			document.getElementById("iframe").style.height=submenu.clientHeight+"px";
+			document.getElementById("iframe").style.width=submenu.clientWidth+2+"px";
+			document.getElementById("iframe").style.left=menuleft+"px";
+            document.getElementById("iframe").style.top=menutop+"px";
+            document.getElementById("iframe").style.zIndex="999";/*9999999*/
+	}
+}
+
+var setSubmenVarSet;
+
+function setIframe2(setSubmenuover)
+{
+if(BrowserDetect.browser=="Explorer" && BrowserDetect.version<="6")
+	{
+			var setSubmenuover = document.getElementById(setSubmenuover);
+			if(document.getElementById("iframe").style.display!="none")
+			document.getElementById("iframe").style.display="";
+			else
+			document.getElementById("iframe").style.display=="none";
+			
+			document.getElementById("iframe").style.height=setSubmenuover.clientHeight+ -3 +"px";
+			document.getElementById("iframe").style.width=setSubmenuover.clientWidth+ -2 +"px";
+			document.getElementById("iframe").style.left=setSubmenuover.offsetLeft+"px";
+            document.getElementById("iframe").style.top=setSubmenuover.offsetTop+"px";
+            document.getElementById("iframe").style.zIndex="999";
+	}
+}
+
+function setIframeObSubSubMenu(setSubmenuover)
+{
+if(BrowserDetect.browser=="Explorer" && BrowserDetect.version<="6")
+	{
+			var setSubmenuover = document.getElementById(setSubmenuover);
+			document.getElementById("iframe").style.display="";
+			document.getElementById("iframe").style.height=setSubmenuover.clientHeight+2+"px";
+			document.getElementById("iframe").style.width=setSubmenuover.clientWidth+2+"px";
+			document.getElementById("iframe").style.left=setSubmenuover.offsetLeft+"px";
+			document.getElementById("iframe").style.top=setSubmenuover.offsetTop+"px";
+			document.getElementById("iframe").style.zIndex="999";
+	}
+}
+
+
+
+function setIframe3(getID,mainMenuId,currentLnk)
+{ 
+ var setHoverForParentLi = document.getElementById(currentLnk);
+ 
+ //document.getElementById("getClassofMenu").value = setHoverForParentLi.className;
+ 
+ if(setHoverForParentLi.className=="")
+ setHoverForParentLi.className="ActiveMenuLink";
+ else if(setHoverForParentLi.className=="firstItm")
+ setHoverForParentLi.className="ActiveMenuLinkfirstItm";
+
+
+	if(BrowserDetect.browser=="Explorer" && BrowserDetect.version<="6")
+	{
+			var getIDVal = document.getElementById(getID);
+			var mainMenuId = document.getElementById(mainMenuId);
+			var getCurrentLnk = document.getElementById(currentLnk);
+
+				if(document.getElementById("iframeSub"))
+				{			
+			document.getElementById("iframeSub").style.display="";
+			document.getElementById("iframeSub").style.height=document.getElementById(getID).clientHeight+"px";
+			document.getElementById("iframeSub").style.width=document.getElementById(getID).clientWidth+"px";
+
+   document.getElementById("iframeSub").style.left=mainMenuId.offsetLeft+mainMenuId.clientWidth+"px";
+   document.getElementById("iframeSub").style.top=getCurrentLnk.offsetTop+122+"px";
+   document.getElementById("iframeSub").style.zIndex="999";
+ 				}
+
+			document.getElementById("iframe").style.display="";
+			document.getElementById("iframe").style.height=mainMenuId.clientHeight+"px";
+			document.getElementById("iframe").style.width=mainMenuId.clientWidth+"px";
+			document.getElementById("iframe").style.left=mainMenuId.offsetLeft+"px";
+		 document.getElementById("iframe").style.top=mainMenuId.offsetTop+"px";
+		 document.getElementById("iframe").style.zIndex="999";
+
+	}
+}
+
+
+function loadHomePage()
+{
+    var url = document.location.href.replace('http://','') ;
+    var urlParts = url.split('/');
+    var newUrl = 'http:/';
+    for (var count = 0; count <= 1 ; count ++)
+    {
+        newUrl = newUrl + '/' + urlParts[count].toString();
+    }
+    newUrl = newUrl + '/default.aspx';
+    
+	if (document.location.href.indexOf('/default.aspx') == -1  &&  document.location.href.indexOf('.aspx') > 0 ) 
+	{
+	    document.location.href = newUrl;
+	    //window.navigate('default.aspx');
+	}
+	else
+		return false;
+}
+7ê´8ü      TUmˆTUmˆ:˝∏ƒTVΩ   2:https://https.jetairways.com/Scripts/Menu/menu.js security-info FnhllAKWRHGAlo+ESXykKAAAAAAAAAAAwAAAAAAAAEaphjojKOpF0qJaNXyu+n+CAAQAAgAAAAAAAAAAAAAAACw4N6+LhUposNgK7YiYWzI/H82DxalM0aJQdnbKfH40ZgoyJpFcT/u7IImFpjLfBfjtg2TO2UxuhrpIr1PDk+YAAAAAAAAEKjCCBCYwggMOoAMCAQICDgIAAAAAAUVvfQgqt5S/MA0GCSqGSIb3DQEBBQUAMEYxFzAVBgNVBAoTDkN5YmVydHJ1c3QgSW5jMSswKQYDVQQDEyJDeWJlcnRydXN0IFB1YmxpYyBTdXJlU2VydmVyIFNWIENBMB4XDTE0MDQxNzExNDAzOFoXDTE1MDQxNzExNDAzOFowgYUxCzAJBgNVBAYTAklOMRQwEgYDVQQIEwtNYWhhcmFzaHRyYTEPMA0GA1UEBxMGTXVtYmFpMSAwHgYDVQQKExdKZXQgQWlyd2F5cyAoSW5kaWEpIEx0ZDESMBAGA1UECxMJZUNvbW1lcmNlMRkwFwYDVQQDFBAqLmpldGFpcndheXMuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqhHDspu4SJlyPFjjEKIsAUddS3ya4n+zmjdOgwDRV9GKS6htqp165O4V5idQgTKJB2NyOsGoBhew259zTZ4KT145cNb4vXEO91YfUwJje5lpPxVTH73hvGSpnB8mKndew3HS3tCw0GZH6FrupR2EK9HMekBKBBnSdLq5ytfkhm3S2Vw/UUMoLtRz7Cu/GGWEObGiqKQ3BFuMOJ+T01B1XbsZTQJmENksduxGzp0clY4QE1yDdGGKJb8/wD6PoD6pvHDNHciCkAMzUwGLyUxfDE0AEFqfOPQOoERV9SAxazwPGlkJGagpxbwtn2yg/fyc52Z3Xl+p3sDaVuGMZHkq+QIDAQABo4HRMIHOMB8GA1UdIwQYMBaAFASYYN+AG5ZJXWVWLaUsCSQK7Ny5MD8GA1UdHwQ4MDYwNKAyoDCGLmh0dHA6Ly9jcmwub21uaXJvb3QuY29tL1B1YmxpY1N1cmVTZXJ2ZXJTVi5jcmwwHQYDVR0OBBYEFFtjKIBe3PMh+BpziooDijS/GnT5MAkGA1UdEwQCMAAwDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjARBglghkgBhvhCAQEEBAMCBsAwDQYJKoZIhvcNAQEFBQADggEBAExdINorM3qWEBejkdhD2i1GID2tB1TJ+1zzTTTwie7QmHEBdROq+gjhapWJfodiaAXcqDX16HLxxeV6AtjgaB7u8KHpIcrgQ+HJHgy9fd3ysOOjAzF+F56pRn/JBbPLGSek6kD8UBRq+PjLOtouVD76c/tdLMp/X5/hpBSQZCiyvsUXsFCo0EKrpDttvkDEPzBO6i87b9u12tzu4x+KRJRtPFfqqLJKpVjTtqV+ddzW1IziV7q37D1FsYkzWsxE0+b/LhxPBisdaA3TEfrqor5qy30vOTix1qP1LvQHY5RXecM5MLlpLeqm4LRubIZFWn0sQRVZtQDdnORbRf4tH6MAAAEAAAABAAAAABxUTFNfUlNBX1dJVEhfQUVTXzI1Nl9DQkNfU0hBAAAAAQA= request-method GET response-head HTTP/1.1 200 OK
+Content-Type: application/javascript
+Last-Modified: Thu, 06 Jan 2011 09:48:28 GMT
+Accept-Ranges: bytes
+Etag: "5817b9de86adcb1:0"
+Server: Microsoft-IIS/8.5
+X-Powered-By: ASP.NET
+Content-Length: 22922
+front-end-https: on
+Cache-Control: max-age=86400
+Date: Sat, 01 Nov 2014 23:23:45 GMT
+ uncompressed-len 0   Yä

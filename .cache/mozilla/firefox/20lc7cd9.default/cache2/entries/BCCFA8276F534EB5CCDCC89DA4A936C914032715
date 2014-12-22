@@ -1,0 +1,1628 @@
+ï»¿
+/*Jira number           Name            Date                    Description
+
+NJP-1405              Snehal          29-03-2010                Replace payonline tab on homae page OBE with web check in tab
+NJP-1779              Rita            13-05-2010                ClaimMissingMiles JQuery Implementation
+*/
+
+
+
+
+
+
+
+numdivs = 6
+var divNo = 1
+which = null
+IE5 = NN4 = NN6 = false
+if (document.all) IE5 = true
+else if (document.layers) NN4 = true
+else if (document.getElementById) NN6 = true
+
+function ObeInitBlock(a) {
+    showDiv(a)
+}
+function showDiv(which) {
+    for (i = 1; i < numdivs; i++) {
+        if (NN4) eval("document.div" + i + ".display='none'")
+        if (IE5) eval("document.all.div" + i + ".style.display='none'")
+        if (NN6) eval("document.getElementById('div" + i + "').style.display='none'")
+    }
+    if (NN4) eval("document.div" + which + ".display=''")
+    if (IE5) eval("document.all.div" + which + ".style.display=''")
+    if (NN6) eval("document.getElementById('div" + which + "').style.display=''")
+}
+
+tabdivs = 7
+function updateTabClass(which) {
+    for (i = 1; i < tabdivs; i++) {
+
+        if (i != "5") { //setting tab no to [5] for double line text [Reedem JPMiles], change # according to double line text.
+            if (NN4) eval("document.Tab" + i + ".className=''")
+            if (IE5) eval("document.all.Tab" + i + ".className=''")
+            if (NN6) eval("document.getElementById('Tab" + i + "').className=''")
+        }
+        else {
+            if (NN4) eval("document.Tab" + i + ".className='TabsTxtTwoLine'")
+            if (IE5) eval("document.all.Tab" + i + ".className='TabsTxtTwoLine'")
+            if (NN6) eval("document.getElementById('Tab" + i + "').className='TabsTxtTwoLine'")
+        }
+    }
+    if (which != "5") { //setting tab no to [5] for double line text [Reedem JPMiles], change # according to double line text.
+        if (NN4) eval("document.Tab" + which + ".className='ActiveTab'")
+        if (IE5) eval("document.all.Tab" + which + ".className='ActiveTab'")
+        if (NN6) eval("document.getElementById('Tab" + which + "').className='ActiveTab'")
+    }
+    else {
+        if (NN4) eval("document.Tab" + which + ".className='TabsTxtTwoLineAct'")
+        if (IE5) eval("document.all.Tab" + which + ".className='TabsTxtTwoLineAct'")
+        if (NN6) eval("document.getElementById('Tab" + which + "').className='TabsTxtTwoLineAct'")
+    }
+}
+
+// Inner Obe Show Hide start 
+var IPOBEStateFirstTime = 0;
+var hideShowTab1Act = 0;
+function showInnerDiv(which) {
+    // Kapil Start
+    if (which != null || which != "undefined") {
+
+        var ipObeShowHideDiv = document.getElementById("IPObeShowHideDiv");
+        var ipObeBottomArrowUpDown = document.getElementById("IPObeBottomArrowUpDown");
+
+        if (IPOBEStateFirstTime != 0) {
+			
+            if ((ipObeShowHideDiv.style.display == "" || ipObeShowHideDiv.style.display == "block") && document.getElementById('Obein' + which + '').style.display == "") {
+				
+                ipObeBottomArrowUpDown.style.marginTop = "-" + 2 + "px";
+                ipObeBottomArrowUpDown.style.marginLeft = 1 + "px";
+                ipObeBottomArrowUpDown.style.backgroundPosition = "left bottom";
+                $("#IPObeShowHideDiv").slideUp(1500);
+                hideShowTab1Act = 1;
+            }
+            else {
+				
+                ipObeBottomArrowUpDown.style.marginTop = "-" + 2 + "px";
+                ipObeBottomArrowUpDown.style.marginLeft = 1 + "px";
+                ipObeBottomArrowUpDown.style.backgroundPosition = "left top";
+                $("#IPObeShowHideDiv").slideDown(1500);
+            }
+        }
+
+        for (i = 1; i <= numdivs; i++) {
+
+            var getClass = document.getElementById("ObeinClass" + i);
+            var getBottomClass = document.getElementById("ObeBottomTxtUpdate");
+            var getIndexofObeinClass = getClass.className;
+            if (getIndexofObeinClass.indexOf('Act') != "-1") {
+                var findActVal = getIndexofObeinClass.replace('Act', '');
+                document.getElementById('ObeinClass' + i + '').className = '' + findActVal + '';
+            }
+            else
+                document.getElementById('ObeinClass' + i + '').className = '' + getClass.className + '';
+
+            var getIndexOfObeBottomTxt = getBottomClass.className;
+            if (getIndexOfObeBottomTxt.indexOf(i) != "-1") {
+                var findActVal = getIndexOfObeBottomTxt.replace(i, '')
+                document.getElementById('ObeBottomTxtUpdate').className = '' + findActVal + '';
+            }
+            else
+                document.getElementById('ObeBottomTxtUpdate').className = '' + getBottomClass.className + '';
+
+            document.getElementById('Obein' + i + '').style.display = 'none';
+            //$("#Obein"+i).fadeOut()
+            divNo = which
+        }
+
+//which > 5
+        if (which == "undefined" || which == 0 || which == null || which > 6) {
+            //divNo = 1
+            $("#IPObeShowHideDiv").hide();
+            setTimeout("MyScreenSize()",1000);
+            ipObeBottomArrowUpDown.style.marginTop = 0 + "px";
+            ipObeBottomArrowUpDown.style.backgroundPosition = "left bottom";
+            IPOBEStateFirstTime = 1;
+            return false
+        }
+
+
+        var getClass = document.getElementById("ObeinClass" + which),
+			getBottomClass = document.getElementById("ObeBottomTxtUpdate"),
+			strObeBotUpdateTxt = document.getElementById('ObeBottomTxtUpdate'); /* These 3 lines also modified for efficiency*/
+        
+        document.getElementById('ObeinClass' + which + '').className = '' + getClass.className + 'Act';
+        //document.getElementById('ObeBottomTxtUpdate').className = '' + getBottomClass.className + which + ''; //modified to below [if condition] respect to BugID: 1238 on 14-Nov-2012 replacement of icons.
+				
+        if (which == 2) {
+            strObeBotUpdateTxt.className = '' + getBottomClass.className + 4 + ''; //Hotels
+        }
+        else if (which == 3) {
+            strObeBotUpdateTxt.className = '' + getBottomClass.className + 0 + ''; //Cars
+        }
+        else if (which == 4) {
+            strObeBotUpdateTxt.className = '' + getBottomClass.className + 2 + ''; //Pay Online
+        }
+        else if (which == 5) {
+            strObeBotUpdateTxt.className = '' + getBottomClass.className + 3 + ''; //Reedem Online
+        }
+        else if (which == 6) {
+            strObeBotUpdateTxt.className = '' + getBottomClass.className + 5 + ''; //Insuarance
+        }
+        else {
+            strObeBotUpdateTxt.className = '' + getBottomClass.className + which + ''; //Flights
+        }
+        document.getElementById('Obein' + which + '').style.display = '';
+        
+        
+        IPOBEStateFirstTime = 1
+        //$("#Obein"+which).slideDown(1000)
+        return false;
+    }
+    // Kapil
+
+}
+
+
+function hideShowIPObeBlock() {
+    var ipObeShowHideDiv = document.getElementById("IPObeShowHideDiv");
+    var ipObeBottomArrowUpDown = document.getElementById("IPObeBottomArrowUpDown");
+
+    //for(i=1;i<numdivs;i++)
+    //{
+    //	 var getClass = document.getElementById("ObeinClass"+i);
+    //	 var getBottomClass = document.getElementById("ObeBottomTxtUpdate");
+    //	 var getIndexofObeinClass = getClass.className;
+    //	 if(getIndexofObeinClass.indexOf('Act')!="-1")
+    //	 {
+    //	 var findActVal = getIndexofObeinClass.replace('Act','');
+    //	 document.getElementById('ObeinClass'+i+'').className=''+findActVal+'';
+    //	 }
+    //}
+
+
+    if (ipObeShowHideDiv.style.display == "" || ipObeShowHideDiv.style.display == "block") {
+        ipObeBottomArrowUpDown.style.marginTop = 0 + "px";
+        ipObeBottomArrowUpDown.style.marginLeft = 1 + "px";
+        ipObeBottomArrowUpDown.style.backgroundPosition = "left bottom";
+        $("#IPObeShowHideDiv").slideUp(1500);
+    }
+    else {
+        if (navigator.appName == "Microsoft Internet Explorer")
+            ipObeBottomArrowUpDown.style.marginTop = "-" + 2 + "px";
+        else
+            ipObeBottomArrowUpDown.style.marginTop = "-" + 5 + "px";
+
+        if(IPOBEStateFirstTime == 1)
+        {
+         if(hideShowTab1Act==0)
+         {
+             document.getElementById('ObeinClass1').className = document.getElementById('ObeinClass1').className+"Act";
+             hideShowTab1Act = 1;
+         }
+        }
+        ipObeBottomArrowUpDown.style.marginLeft = 1 + "px";
+        ipObeBottomArrowUpDown.style.backgroundPosition = "left top";
+        $("#IPObeShowHideDiv").slideDown(1500);
+    }
+}
+
+// Inner Obe Show Hide end
+
+
+//<Parameter name="messageDiplayID">
+//null to dispaly message as Alert. 
+//Pass Div ID to display message as Text.
+//</Parameter>
+//<Parameter name="displayMessage">Message.</Parameter>
+//function ShowMessage(messageDiplayID, displayMessage) {
+//    if (objMessageDiplay == null) {
+//        alert(displayMessage);
+//    }
+//    else {
+//        var objMessageDiplay = document.getElementById(messageDiplayID);
+//        objMessageDiplay.innerHTML = displayMessage;
+//    }
+//    
+//
+//}
+
+var ValidateState;
+//Modified by Rita for gadget
+//function Validate(ddlOrigin, ddlDestination, ddlAdult, ddlInfant, ddlChildren, txtStartDate, txtEndDate, txtPromotion, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgPromotion, minPromotionLength, maxPromotionLength, msgOriginDestSame, arrPostName, txtServerDate) {
+//function Validate(ddlOrigin, ddlDestination, ddlAdult, ddlInfant, ddlChildren, txtStartDate, txtEndDate, txtPromotion, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgPromotion, minPromotionLength, maxPromotionLength, msgOriginDestSame, arrPostName, txtServerDate, ddlCountry, msgCountry) {
+//NJP-1004 Past Searches
+function Validate(ddlOrigin, ddlDestination, ddlAdult, ddlInfant, ddlChildren, txtStartDate, txtEndDate, txtPromotion, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgPromotion, minPromotionLength, maxPromotionLength, msgOriginDestSame, arrPostName, txtServerDate, ddlCountry, msgCountry,txtCurrDate,msgSearchDateCompare) {
+    var retValue;
+    var msgDisplay;
+
+
+    retValue = true;
+    msgDisplay = "";
+
+    msgDisplay = (msgDisplay == "") ? (ValidateCountry(ddlCountry) ? "" : msgCountry) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlOrigin) ? "" : msgOrigin) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlDestination) ? "" : msgDestination) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateOriginDest(ddlOrigin, ddlDestination) ? "" : msgOriginDestSame) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateStartEndDate(txtStartDate, txtEndDate, rdoRoundTrip) ? "" : msgDateCompare) : msgDisplay;
+     //For PastSearches StartDate check if less than current date
+    msgDisplay = (msgDisplay == "") ? (ValidateStartSearchDate(txtStartDate, txtCurrDate) ? "" : msgSearchDateCompare) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateInfant(ddlAdult, ddlInfant) ? "" : msgInfantChildCompare) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateTotalSeats(ddlAdult, ddlChildren, maxSeats) ? "" : msgTotalSeats) : msgDisplay;
+    //msgDisplay = (msgDisplay == "") ? (ValidatePromotion(txtPromotion, minPromotionLength, maxPromotionLength) ? "" : msgPromotion) : msgDisplay;
+
+    var SubmitStatus = document.getElementById("SubmitState");
+    if (msgDisplay == "") 
+    {
+        DisplayMessage(ddlOrigin, ddlDestination, txtStartDate, txtEndDate, rdoRoundTrip, arrPostName, txtServerDate);
+        if (ValidateState == false) 
+        {
+
+            if (SubmitStatus) 
+            {
+                SubmitStatus.value = true;
+            }
+            
+            return true;
+        }
+        else 
+        {
+
+            if (SubmitStatus) 
+            {
+                SubmitStatus.value = false;
+            }
+            return false;
+        }
+    }
+    else {
+        //null parameter need to deicide weather message to display as Alert OR Div.
+        //If Div then change the null parameter with DIV id.
+        //Currently null is to dispaly message as Alert.
+        ShowMessage(msgDisplay);
+        if (SubmitStatus) {
+            SubmitStatus.value = false;
+        }
+        return false;
+    }
+}
+//NJP-1269
+function ValidateCashNMiles(ddlOrigin, ddlDestination, ddlAdult, ddlInfant,ddlChildren, txtStartDate, txtEndDate, txtPromotion, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgPromotion, minPromotionLength, maxPromotionLength, msgOriginDestSame, arrPostName, txtServerDate, ddlCountry, msgCountry,txtCurrDate,msgSearchDateCompare) {
+    var retValue;
+    var msgDisplay;
+
+
+    retValue = true;
+    msgDisplay = "";
+
+    msgDisplay = (msgDisplay == "") ? (ValidateCountry(ddlCountry) ? "" : msgCountry) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlOrigin) ? "" : msgOrigin) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlDestination) ? "" : msgDestination) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateOriginDest(ddlOrigin, ddlDestination) ? "" : msgOriginDestSame) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateStartEndDate(txtStartDate, txtEndDate, rdoRoundTrip) ? "" : msgDateCompare) : msgDisplay;
+     //For PastSearches StartDate check if less than current date
+    msgDisplay = (msgDisplay == "") ? (ValidateStartSearchDate(txtStartDate, txtCurrDate) ? "" : msgSearchDateCompare) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateInfant(ddlAdult, ddlInfant) ? "" : msgInfantChildCompare) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateTotalSeats(ddlAdult, ddlChildren, maxSeats) ? "" : msgTotalSeats) : msgDisplay;
+    //msgDisplay = (msgDisplay == "") ? (ValidatePromotion(txtPromotion, minPromotionLength, maxPromotionLength) ? "" : msgPromotion) : msgDisplay;
+
+    var SubmitStatus = document.getElementById("SubmitState");
+    if (msgDisplay == "") 
+    {
+        DisplayMessage(ddlOrigin, ddlDestination, txtStartDate, txtEndDate, rdoRoundTrip, arrPostName, txtServerDate);
+        if (ValidateState == false) 
+        {
+
+            if (SubmitStatus) 
+            {
+                SubmitStatus.value = true;
+            }
+            
+            return true;
+        }
+        else 
+        {
+
+            if (SubmitStatus) 
+            {
+                SubmitStatus.value = false;
+            }
+            return false;
+        }
+    }
+    else {
+        //null parameter need to deicide weather message to display as Alert OR Div.
+        //If Div then change the null parameter with DIV id.
+        //Currently null is to dispaly message as Alert.
+        ShowMessage(msgDisplay);
+        if (SubmitStatus) {
+            SubmitStatus.value = false;
+        }
+        return false;
+    }
+}
+function ValidateBlank(objectID) {
+
+    var obj = document.getElementById(objectID);
+
+    if ((obj.value == "") || (obj.value == "--Depart--") || (obj.value == "--Return--"))
+        return false;
+    else
+        return true;
+
+}
+function ValidateOriginDest(ddlOrigin, ddlDestination) {
+
+    var objOrigin = document.getElementById(ddlOrigin);
+    var objDestination = document.getElementById(ddlDestination);
+
+    if (objOrigin.value == objDestination.value)
+        return false;
+    else
+        return true;
+}
+
+function ValidateStartEndDate(txtStartDate, txtEndDate, rdoRoundTrip) {
+
+    var objStartDate = document.getElementById(txtStartDate);
+    var objEndDate = document.getElementById(txtEndDate);
+    var objRoundTrip = document.getElementById(rdoRoundTrip);
+
+    var dtStartDate = new Date(parseJetDate(objStartDate.value));
+    var dtEndDate = new Date(parseJetDate(objEndDate.value));
+
+    if ((objRoundTrip.checked) && (dtStartDate > dtEndDate))
+        return false;
+    else
+        return true;
+}
+//NJP-1004 Past Searches
+function ValidateStartSearchDate(txtStartDate, txtCurrDate) {
+
+    var objStartDate = document.getElementById(txtStartDate);
+    
+    var dtStartDate = new Date(parseJetDate(objStartDate.value));
+    var dtCurrDate = new Date(parseJetDate(txtCurrDate));
+ 
+    if (dtStartDate < dtCurrDate)
+        return false;
+    else
+        return true;
+}
+function ValidateInfant(ddlAdult, ddlInfant) {
+
+    var objAdult = document.getElementById(ddlAdult);
+    var objInfant = document.getElementById(ddlInfant);
+
+    var intAdult = eval(objAdult.value);
+    var intInfant = eval(objInfant.value);
+
+    if (intInfant > intAdult)
+        return false;
+    else
+        return true;
+}
+//Added by rita for gadgets
+function ValidateCountryForMultiCity(ddlCountry, msgCountry) {
+
+    var retValue;
+    var msgDisplay;
+
+
+    retValue = true;
+    msgDisplay = "";
+
+    msgDisplay = (msgDisplay == "") ? (ValidateCountry(ddlCountry) ? "" : msgCountry) : msgDisplay;
+    if (msgDisplay != "") {
+        ShowMessage(msgDisplay);
+        return false;
+    }
+    return true;
+
+}
+
+function ValidateCountry(ddlCountry) {
+
+    var objCountry = document.getElementById(ddlCountry);
+    //alert(objCountry.options[objCountry.selectedIndex].text);
+    //alert(selCountry.startsWith("--"));
+    if (objCountry != null) {
+        var selCountry = objCountry.options[objCountry.selectedIndex].text;
+        if (objCountry.value == "" || selCountry.startsWith("--"))
+            return false;
+        else
+            return true;
+    }
+    else
+        return true;
+}
+
+function ValidateTotalSeats(ddlAdult, ddlChildren, maxSeats) {
+
+    var objAdult = document.getElementById(ddlAdult);
+    var objChildren = document.getElementById(ddlChildren);
+
+    var intAdult = eval(objAdult.value);
+    var intChildren = eval(objChildren.value);
+
+    var sumTickets;
+    sumTickets = intAdult + intChildren;
+    if (sumTickets > maxSeats)
+        return false;
+    else
+        return true;
+}
+function ValidatePromotion(txtPromotion, minPromotionLength, maxPromotionLength) {
+
+    var objPromotion = document.getElementById(txtPromotion);
+
+    if ((objPromotion.value.length < minPromotionLength) || (objPromotion.value.length >= maxPromotionLength))
+        return false;
+    else
+        return true;
+}
+
+function RoundOrOneWay(rdoRoundTrip, btnEndDateCal, txtEndDate, autoBoxDestination, autoBoxOrigin, rdoOneWay) {
+
+    var objRoundTrip = document.getElementById(rdoRoundTrip);
+
+    if (document.getElementById(rdoOneWay) != undefined || document.getElementById(rdoOneWay) != null)
+        var objOneWayTrip = document.getElementById(rdoOneWay);
+
+    var objEndDateCal = document.getElementById(btnEndDateCal);
+    var objEndDate = document.getElementById(txtEndDate);
+    var destination = document.getElementById(autoBoxDestination);
+
+    if (document.getElementById(autoBoxOrigin) != undefined || document.getElementById(autoBoxOrigin) != null)
+        var origin = document.getElementById(autoBoxOrigin);
+
+
+
+    if (objOneWayTrip != undefined || objOneWayTrip != null) {
+        if (objOneWayTrip.checked) {
+            if (origin != null && origin.value == "")
+                origin.value = '--Depart--';
+        }
+    }
+
+
+    if (objRoundTrip.checked) {
+        objEndDateCal.disabled = false;
+        objEndDate.disabled = false;
+        if (destination != null && destination.value == "" || destination != null && destination.value == "--Arrive--")
+            destination.value = '--Return--';
+    }
+    else {
+        objEndDateCal.disabled = true;
+        objEndDate.disabled = true;
+        if (destination != null && destination.value == "" || destination != null && destination.value == "--Return--")
+            destination.value = '--Arrive--';
+    }
+
+}
+
+function DisplayMessage(ddlOrigin, ddlDestination, txtStartDate, txtEndDate, rdoRoundTrip, arrPostName, txtServerDate) {
+
+
+	 var serverdate = null;
+
+    if (txtServerDate) {
+        serverdate = document.getElementById(txtServerDate)
+    }
+
+    var objOrigin = document.getElementById(ddlOrigin);
+    var objDestination = document.getElementById(ddlDestination);
+
+    var objStartDate = document.getElementById(txtStartDate);
+    var objEndDate = document.getElementById(txtEndDate);
+
+    var dtStartDate = new Date(parseJetDate(objStartDate.value));
+    var dtEndDate = new Date(parseJetDate(objEndDate.value));
+
+    var dtStartDate3 = parseInt(dtStartDate.getMonth() + 1) + "/" + dtStartDate.getDate() + "/" + dtStartDate.getFullYear();
+    var dtEndDate3 = parseInt(dtEndDate.getMonth() + 1) + "/" + dtEndDate.getDate() + "/" + dtEndDate.getFullYear();
+
+    ValidateState = false;
+    var checkAiport;
+    var aiportType;
+
+    var arrAirport = eval("arrAirport_" + arrPostName);
+    var arrDates = eval("arrDates_" + arrPostName);
+    var arrMessage = eval("arrMessage_" + arrPostName);
+
+    var arrBookingDates = eval("arrInfoType_BookingDates_" + arrPostName);
+
+    aiportType = "";
+
+    if (arrAirport) {
+        for (var i = 0; i < arrAirport.length; i++) {
+            checkAiport = false;
+
+            if (arrAirport[i][0] == trim(objOrigin.value)) {
+                //aiportType = "Origin Airport: \n";
+                checkAiport = true;
+            }
+            else if (arrAirport[i][1] != "undefined" || arrAirport[i][1] != null) {
+                if (arrAirport[i][1] == trim(objDestination.value)) {
+                    //aiportType = "Destination Airport: \n";
+                    checkAiport = true;
+                }
+
+            }
+
+
+            if ((!ValidateState) && (checkAiport)) {
+                //alert(arrAirport[i][0] + " = " + arrAirport[i][1] + " = " + objOrigin.value + "\n" + arrMessage[i][0]);
+                var arrStartDateNew = new Date(arrDates[i][0]);
+                var arrEndDateNew = new Date(arrDates[i][1]);
+
+                arrStartDateNewSet = parseInt(arrStartDateNew.getMonth() + 1) + "/" + arrStartDateNew.getDate() + "/" + arrStartDateNew.getFullYear()
+					
+					if (arrDates[i][1]=='')
+					{
+						 arrEndDateNewSet = parseInt(arrStartDateNew.getMonth() + 1) + "/" + arrStartDateNew.getDate() + "/" + eval (arrStartDateNew.getFullYear() + 1)				
+					}
+					else 
+					{
+			            arrEndDateNewSet = parseInt(arrEndDateNew.getMonth() + 1) + "/" + arrEndDateNew.getDate() + "/" + arrEndDateNew.getFullYear()
+					}               					
+
+                //alert(dateWithin(dtStartDate3, dtEndDate3, parseJetDate(objStartDate.value)) + "\n" + dateWithin(dtStartDate3, dtEndDate3, parseJetDate(objEndDate.value)));
+                //alert(arrAirport[i][0] + "\n" + arrAirport[i][1] + "\n" + arrStartDateNewSet + "\n" + arrEndDateNewSet);
+
+                //alert(dateWithin(dtStartDate3, dtEndDate3, arrStartDateNewSet));
+                if (arrMessage[i][1] != undefined) {
+                    //Added new code for handling Booking Dates info Messages
+                    var arrBookingStartDateNew = new Date(arrBookingDates[i][0]);
+                    var arrBookingEndDateNew = new Date(arrBookingDates[i][1]);
+					
+                    if ((arrBookingStartDateNew != "") && (arrBookingEndDateNew != "")) {
+                        arrBookingStartDateNewSet = parseInt(arrBookingStartDateNew.getMonth() + 1) + "/" + arrBookingStartDateNew.getDate() + "/" + arrBookingStartDateNew.getFullYear()
+                        arrBookingEndDateNewSet = parseInt(arrBookingEndDateNew.getMonth() + 1) + "/" + arrBookingEndDateNew.getDate() + "/" + arrBookingEndDateNew.getFullYear()
+
+                        if (dateWithin(arrBookingStartDateNewSet, arrBookingEndDateNewSet, parseJetDate(serverdate.value))) {
+                            //Airport Info Message
+							//alert ("Airport Info Message");
+                            if ((arrAirport[i][0] != undefined) && (arrAirport[i][1] != undefined)) {
+                                //alert(arrAirport[i][0] + "\n" + arrAirport[i][1] + "\n" + arrStartDateNewSet + "\n" + arrEndDateNewSet);
+                                if ((arrAirport[i][0] == trim(objOrigin.value)) && (arrAirport[i][1] == trim(objDestination.value))) {
+                                    ShowMessage(arrMessage[i][0]);
+                                    if (arrMessage[i][1] == "true") {
+                                        ValidateState = true;
+                                        break;
+                                    }
+                                }
+                                else if ((arrAirport[i][0] == trim(objOrigin.value)) && (arrAirport[i][1] == "")) {
+                                    ShowMessage(arrMessage[i][0]);
+                                    if (arrMessage[i][1] == "true") {
+                                        ValidateState = true;
+                                        break;
+                                    }
+                                }
+                                else if ((arrAirport[i][0] == "") && (arrAirport[i][1] == trim(objDestination.value))) {
+                                    ShowMessage(arrMessage[i][0]);
+                                    if (arrMessage[i][1] == "true") {
+                                        ValidateState = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }//End of the add part
+                    if (dateWithin(arrStartDateNewSet, arrEndDateNewSet, parseJetDate(objStartDate.value)) || dateWithin(arrStartDateNewSet, arrEndDateNewSet, parseJetDate(objEndDate.value))) {
+						 //Airport Info Message
+                        if ((arrAirport[i][0] != undefined) && (arrAirport[i][1] != undefined)) {
+                            //alert(arrAirport[i][0] + "\n" + arrAirport[i][1] + "\n" + arrStartDateNewSet + "\n" + arrEndDateNewSet);
+
+                            if ((arrAirport[i][0] == trim(objOrigin.value)) && (arrAirport[i][1] == trim(objDestination.value))) {
+                                ShowMessage(arrMessage[i][0]);
+                                if (arrMessage[i][1] == "true") {
+                                    ValidateState = true;
+                                    break;
+                                }
+                            }
+                            else if ((arrAirport[i][0] == trim(objOrigin.value)) && (arrAirport[i][1] == "")) {
+                                ShowMessage(arrMessage[i][0]);
+                                if (arrMessage[i][1] == "true") {
+                                    ValidateState = true;
+                                    break;
+                                }
+                            }
+                            else if ((arrAirport[i][0] == "") && (arrAirport[i][1] == trim(objDestination.value))) {
+                                ShowMessage(arrMessage[i][0]);
+                                if (arrMessage[i][1] == "true") {
+                                    ValidateState = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else {//DownTime Message
+                            ShowMessage(aiportType + arrMessage[i][0]);
+                            if (arrMessage[i][1] == "true") {
+                                ValidateState = true;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+                else {//GoLive Message
+
+
+                    var objRoundTrip = document.getElementById(rdoRoundTrip);
+
+
+                    // alert("Start Date : " + dtStartDate3 + "\n End Date : " + dtEndDate3 + "\n Array Start Date" + arrStartDateNewSet + "\n Array End Date" + arrEndDateNewSet);
+                    if (!dateWithin(arrStartDateNewSet, arrEndDateNewSet, dtStartDate3)) {
+                        alert(aiportType + arrMessage[i][0]);
+                        ValidateState = true;
+                        break;
+                    }
+                    else if ((objRoundTrip.checked) && (!dateWithin(arrStartDateNewSet, arrEndDateNewSet, dtEndDate3))) {
+                        alert(aiportType + arrMessage[i][0]);
+                        ValidateState = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else {
+        ValidateState = true;
+    }
+}
+
+//function isCritical(msgDisplay, bCritical, strType) {
+//    ShowMessage(null, strType + msgDisplay);
+//    if (bCritical == "true") {
+//        ValidateState = true;
+//    }
+//}
+
+function dateWithin(beginDate, endDate, checkDate) {
+    var b, e, c;
+    b = Date.parse(beginDate);
+    e = Date.parse(endDate);
+    c = Date.parse(checkDate);
+    if ((c <= e && c >= b)) {
+        return true;
+    }
+    return false;
+}
+
+//*************
+//Hotel Booking
+//*************
+function ValidateHotel(ddlCity, ddlCityIndia, ddlAdult, ddlRooms, ddlChildren, txtStartDate, txtEndDate, rdoInternational, ddlChildAge, msgBlankCity, msgDateCompare, msgBlankChildAge) {
+    var retValue;
+    var msgDisplay;
+
+    retValue = true;
+    msgDisplay = "";
+
+    msgDisplay = (msgDisplay == "") ? (ValidateHotelBlank(ddlCity, ddlCityIndia, rdoInternational) ? "" : msgBlankCity) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateDate(txtStartDate, txtEndDate) ? "" : msgDateCompare) : msgDisplay;
+    //SetCountryID(hidCountryID, ddlCity);
+    msgDisplay = (msgDisplay == "") ? (CheckChildrenAge(rdoInternational, ddlChildren, ddlChildAge) ? "" : msgBlankChildAge) : msgDisplay;
+
+    var SubmitStatus = document.getElementById("SubmitState");
+
+    if (msgDisplay == "") {
+        if (SubmitStatus) {
+            SubmitStatus.value = true;
+        }
+        return true;
+    }
+    else {
+        //null parameter need to deicide weather message to display as Alert OR Div.
+        //If Div then change the null parameter with DIV id.
+        //Currently null is to dispaly message as Alert.
+        ShowMessage(msgDisplay);
+        if (SubmitStatus) {
+            SubmitStatus.value = false;
+        }
+        return false;
+    }
+}
+
+function ValidateDate(txtStartDate, txtEndDate) {
+
+    var objStartDate = document.getElementById(txtStartDate);
+    var objEndDate = document.getElementById(txtEndDate);
+
+    var dtStartDate = new Date(parseJetDate(objStartDate.value));
+    var dtEndDate = new Date(parseJetDate(objEndDate.value));
+
+    if (dtStartDate > dtEndDate)
+        return false;
+    else
+        return true;
+}
+
+function ValidateHotelBlank(objectID, objectIDIndia, rdoInternational) {
+
+    var objCity = document.getElementById(objectID);
+    var objIndiacity = document.getElementById(objectIDIndia);
+    var objrdoInternational = document.getElementById(rdoInternational);
+
+    if (!objrdoInternational.checked) {
+        if ((objIndiacity.value == "") || (objIndiacity.value == "Select City"))
+            return false;
+        else
+            return true;
+    }
+    else {
+        if ((objCity.value == "") || (objCity.value == "Select City"))
+            return false;
+        else
+            return true;
+    }
+
+}
+function SetCountryID(hidCountryID, ddlCity) {
+
+    var objhidCountryID = document.getElementById(hidCountryID);
+    var objddlCity = document.getElementById(ddlCity);
+
+    for (var i = 0; i < arrayIndiaKeys.length; i++) {
+        if (arrayIndiavalues[i][1] == objddlCity.value) {
+            objhidCountryID.value = arrayIndiaKeys[i];
+            break;
+        }
+    }
+}
+
+function CheckChildrenAge(rdoInternational, ddlChildren, ddlChildAge) {
+
+    var objrdoInternational = document.getElementById(rdoInternational);
+    var objChildren = document.getElementById(ddlChildren);
+    var retValue = true;
+
+    var childAge = ddlChildAge.toString().substring(0, ddlChildAge.length - 1);
+
+    if (!objrdoInternational.checked) {
+        if (objChildren.value != "0") {
+            for (var i = 1; i < eval(objChildren.value) + 1; i++) {
+                var objddlChildAge;
+                objddlChildAge = document.getElementById(childAge + i);
+                if (objddlChildAge.value == "0") {
+                    retValue = false;
+                    break;
+                }
+            }
+        }
+    }
+    return retValue;
+}
+
+function SetChildren(ddlCity, ddlChildren, ddlChildAge1, rdoInternational, childAgeUBound) {
+
+    var objddlCity = document.getElementById(ddlCity);
+    var objddlChildren = document.getElementById(ddlChildren);
+    var objrdoInternational = document.getElementById(rdoInternational);
+    var childAge = ddlChildAge1.toString().substring(0, ddlChildAge1.length - 1);
+
+    ChildAgeNotVisible(childAge, childAgeUBound);
+
+    //SetCountryID(hidCountryID, ddlCity);
+
+    if (!objrdoInternational.checked) {
+        if (objddlChildren.value != "0") {
+            for (var i = 1; i < eval(objddlChildren.value) + 1; i++) {
+                var objddlChildAge;
+                objddlChildAge = document.getElementById(childAge + i);
+                objddlChildAge.style.display = "";
+            }
+        }
+    }
+
+}
+function ChildAgeNotVisible(childAge, childAgeUBound) {
+    var objddlChildAge;
+    for (var i = 1; i < eval(childAgeUBound); i++) {
+        objddlChildAge = document.getElementById(childAge + i);
+        objddlChildAge.style.display = "none";
+        objddlChildAge.selectedIndex = 0;
+    }
+}
+function ChangeCity(ddlCity, rdoInternational, divCheckResMyLink, ddlChildren, ddlChildAge1, ddlRooms, ddlAdultRoom2, ddlAdultRoom3, ddlChildrenRooms2, ddlChildrenRooms3, divAgeCriteria, trHotelInternational, trHotelIndia, childAgeUBound, hotrm2_intlHotel, hotrm3_intlHotel, objchangeRoomTxt) {
+
+    var objddlCity = document.getElementById(ddlCity);
+    var objddlChildren = document.getElementById(ddlChildren);
+    var objRooms = document.getElementById(ddlRooms);
+    var objCheckResMyLink = document.getElementById(divCheckResMyLink);
+    var objCheckAgeCriteria = document.getElementById(divAgeCriteria);
+    var objrdoInternational = document.getElementById(rdoInternational);
+    var childAge = ddlChildAge1.toString().substring(0, ddlChildAge1.length - 1);
+
+    //SetCountryID(hidCountryID, ddlCity);
+
+    ChildAgeNotVisible(childAge, childAgeUBound);
+
+    objddlChildren.selectedIndex = 0;
+    objRooms.selectedIndex = 0;
+    ChangeRooms(ddlCity, rdoInternational, ddlRooms, ddlAdultRoom2, ddlAdultRoom3, ddlChildrenRooms2, ddlChildrenRooms3, hotrm2_intlHotel, hotrm3_intlHotel);
+    //alert(objrdoInternational.checked + "objrdoInternational.checked");
+    if (objrdoInternational.checked) {
+        for (i = objRooms.length - 1; i >= 0; i--) {
+            if (objRooms.options[i].value == "4") {
+                objRooms.remove(i);
+            }
+        }
+        objCheckResMyLink.style.display = "none";
+        objCheckAgeCriteria.style.display = "none";
+        document.getElementById(objchangeRoomTxt).innerHTML = "Room 1:";
+
+
+        var objtrHotelInternational = document.getElementById(trHotelInternational);
+        objtrHotelInternational.style.display = "";
+        var objtrHotelIndia = document.getElementById(trHotelIndia);
+        objtrHotelIndia.style.display = "none";
+    }
+    else {
+        objCheckResMyLink.style.display = "";
+        objCheckAgeCriteria.style.display = "";
+        document.getElementById(objchangeRoomTxt).innerHTML = "Rooms:";
+        var valuePersent = false;
+        for (i = objRooms.length - 1; i >= 0; i--) {
+            if (objRooms.options[i].value == "4") {
+                valuePersent = true;
+            }
+        }
+
+        if (!valuePersent) {
+            objRooms.options[objRooms.length] = new Option('4', '4');
+        }
+
+        var objtrHotelInternational = document.getElementById(trHotelInternational);
+        objtrHotelInternational.style.display = "none";
+        var objtrHotelIndia = document.getElementById(trHotelIndia);
+        objtrHotelIndia.style.display = "";
+    }
+    //ChangeAriportData(ddlCity, rdoInternational);
+
+}
+
+
+
+function ChangeAriportData(ddlCity, rdoInternational) {
+
+    var ObeHotelsIdGet = document.getElementById("HotelsAutoSuggestId").value
+
+    var KeysSet = "Keys_" + ObeHotelsIdGet;
+    var ValuesSet = "Values_" + ObeHotelsIdGet;
+    PortCodesSet = ObeHotelsIdGet + "_PortCodes";
+    PortNamesSet = ObeHotelsIdGet + "_PortNames";
+
+    var objddlCity = document.getElementById(ddlCity);
+    var objrdoInternational = document.getElementById(rdoInternational);
+    var functionName = ObeHotelsIdGet + "_SetupAutoComplete()";
+
+
+    objddlCity.length = 0;
+
+    if (objrdoInternational.checked) {
+        for (var i = 0; i < arrayInternationalKeys.length; i++) {
+            objddlCity.options[objddlCity.length] = new Option(arrayInternationalKeys[i], arrayInternationalValues[i]);
+        }
+
+        KeysSet = arrayInternationalKeys;
+        ValuesSet = arrayInternationalValues;
+    }
+    else {
+        for (var i = 0; i < arrayIndiaKeys.length; i++) {
+            objddlCity.options[objddlCity.length] = new Option(arrayIndiaKeys[i], arrayIndiaValues[i]);
+        }
+        KeysSet = arrayIndiaKeys;
+        ValuesSet = arrayIndiaValues;
+    }
+
+    ctl00_autoCity_PortCodes = ValuesSet.slice(0, -1); //to Remove last comma in array to fix in IE
+    ctl00_autoCity_PortNames = KeysSet.slice(0, -1); //to Remove last comma in array to fix in IE
+    //alert(functionName);
+    if (true)
+        eval(functionName);
+
+
+}
+function ChangeRooms(ddlCity, rdoInternational, ddlRooms, ddlAdultRoom2, ddlAdultRoom3, ddlChildrenRooms2, ddlChildrenRooms3, hotrm2_intlHotel, hotrm3_intlHotel) {
+
+    var objCity = document.getElementById(ddlCity);
+    var objrdoInternational = document.getElementById(rdoInternational);
+
+    var objRooms = document.getElementById(ddlRooms);
+
+    var objAdultRoom2 = document.getElementById(ddlAdultRoom2);
+    var objAdultRoom3 = document.getElementById(ddlAdultRoom3);
+    var objChildrenRooms2 = document.getElementById(ddlChildrenRooms2);
+    var objChildrenRooms3 = document.getElementById(ddlChildrenRooms3);
+
+    var objAdult2 = document.getElementById(hotrm2_intlHotel);
+    var objAdult3 = document.getElementById(hotrm3_intlHotel);
+    //var objRooms = document.getElementById(ddlRooms);
+    var selectedRoom;
+    selectedRoom = objRooms.value;
+
+    //SetCountryID(hidCountryID, ddlCity);
+
+    objAdultRoom2.selectedIndex = 0;
+    objAdultRoom3.selectedIndex = 0;
+    objChildrenRooms2.selectedIndex = 0;
+    objChildrenRooms3.selectedIndex = 0;
+
+    objAdult2.style.display = "none";
+    objAdult3.style.display = "none";
+
+    if (objrdoInternational.checked) {
+        if (selectedRoom == 2) {
+            objAdult2.style.display = "";
+            objAdult3.style.display = "none";
+        }
+        else if (selectedRoom == 3) {
+            objAdult2.style.display = "";
+            objAdult3.style.display = "";
+        }
+    }
+
+}
+//#######################
+//Insurance Booking
+//#######################
+
+function ValidateInsurance(ddlOrigin, ddlDestination, ddlAdult, ddlInfant, ddlChildren, txtStartDate, txtEndDate, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgOriginDestSame, txtPNRStatus, msgInvalidPNR, msgBlankPNR, msgIncompletePNR) {
+    var retValue;
+    var msgDisplay;
+
+    var objtxtPNRStatus = document.getElementById(txtPNRStatus);
+
+
+    retValue = true;
+    msgDisplay = "";
+
+
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlOrigin) ? "" : msgOrigin) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlDestination) ? "" : msgDestination) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateOriginDest(ddlOrigin, ddlDestination) ? "" : msgOriginDestSame) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateStartEndDate(txtStartDate, txtEndDate, rdoRoundTrip) ? "" : msgDateCompare) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateInfant(ddlAdult, ddlInfant) ? "" : msgInfantChildCompare) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateTotalSeats(ddlAdult, ddlChildren, maxSeats) ? "" : msgTotalSeats) : msgDisplay;
+
+    /* Modified by alpesh on 5-March-2009 : Validate PNRNumber field */
+    if (ValidateBlank(txtPNRStatus))
+        msgDisplay = (msgDisplay == "") ? (CheckAlphabets(objtxtPNRStatus.value) ? "" : msgInvalidPNR) : msgDisplay;
+    else
+        msgDisplay = (msgDisplay == "") ? (CheckAlphabets(objtxtPNRStatus.value) ? "" : msgBlankPNR) : msgDisplay;
+
+    msgDisplay = (msgDisplay == "") ? (CheckPNRLength(objtxtPNRStatus.value) ? "" : msgIncompletePNR) : msgDisplay;
+
+    var SubmitStatus = document.getElementById("SubmitState");
+
+    if (msgDisplay == "") {
+        if (SubmitStatus) {
+            SubmitStatus.value = true;
+        }
+        return true;
+    }
+    else {
+        //null parameter need to deicide weather message to display as Alert OR Div.
+        //If Div then change the null parameter with DIV id.
+        //Currently null is to dispaly message as Alert.
+        ShowMessage(msgDisplay);
+        if (SubmitStatus) {
+            SubmitStatus.value = false;
+        }
+        return false;
+    }
+}
+
+//*************
+//Obe Pay Online
+//*************
+function ValidatePayOnline(lblMsg, txtPNRNumber, txtFirstName, txtLastName, txtFlightNumber, txtFlightDate, msgBlankFields, msgOnlyAlphabets, msgInvalidPNRNumber, msgFlightNumber, msgBlankFirstName, msgBlankLastName) {
+    var retValue;
+    var msgDisplay;
+
+    retValue = true;
+    msgDisplay = "";
+
+    var objPNRNumber = document.getElementById(txtPNRNumber);
+    var objFirstName = document.getElementById(txtFirstName);
+    var objLastName = document.getElementById(txtLastName);
+    var objFlightNumber = document.getElementById(txtFlightNumber);
+    var objFlightDate = document.getElementById(txtFlightDate);
+
+    msgDisplay = (msgDisplay == "") ? (!isBlank(objPNRNumber.value) ? "" : msgBlankFields) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (CheckAlphabets(objPNRNumber.value) ? "" : msgInvalidPNRNumber) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (CheckPNRLength(objPNRNumber.value) ? "" : msgInvalidPNRNumber) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (!isBlank(objFirstName.value) ? "" : msgBlankFirstName) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (!isBlank(objLastName.value) ? "" : msgBlankLastName) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (!isBlank(objFlightNumber.value) ? "" : msgFlightNumber) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (CheckNumeric(objFlightNumber.value) ? "" : msgFlightNumber) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (!isBlank(objFlightDate.value) ? "" : msgBlankFields) : msgDisplay;
+
+
+    var SubmitStatus = document.getElementById("SubmitState");
+    if (msgDisplay == "") {
+        //lblMsg.innerHTML = '';
+        SubmitStatus.value = true;
+        return true;
+    }
+    else {
+        //null parameter need to deicide weather message to display as Alert OR Div.
+        //If Div then change the null parameter with DIV id.
+        //Currently null is to dispaly message as Alert.
+
+        //Commented by Kunal to display message in label
+        ShowMessage(msgDisplay);
+        //lblMsg.innerHTML = msgDisplay;
+        SubmitStatus.value = false;
+        return false;
+    }
+}
+
+///////////////////
+// Redeem Online
+//////////////////
+
+function ValidateRedeemOnline(ddlOrigin, ddlDestination, ddlAdult, ddlChildren, txtStartDate, txtEndDate, rdoRoundTrip, msgOrigin, msgDestination, msgDateCompare, msgTotalSeats, maxSeats, msgOriginDestSame, msgBlankStartDate, msgBlankEndDate, arrPostName, txtServerDate) {
+
+    var retValue;
+    var msgDisplay;
+
+
+    retValue = true;
+    msgDisplay = "";
+
+
+    msgDisplay = (msgDisplay == "") ? (ValidateBlankAirport(ddlOrigin) ? "" : msgOrigin) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlankAirport(ddlDestination) ? "" : msgDestination) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateOriginDest(ddlOrigin, ddlDestination) ? "" : msgOriginDestSame) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(txtStartDate) ? "" : msgBlankStartDate) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(txtEndDate) ? "" : msgBlankEndDate) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateStartEndDate(txtStartDate, txtEndDate, rdoRoundTrip) ? "" : msgDateCompare) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateTotalSeats(ddlAdult, ddlChildren, maxSeats) ? "" : msgTotalSeats) : msgDisplay;
+
+
+
+    var SubmitStatus = document.getElementById("SubmitState");
+
+    if (msgDisplay == "") {
+        DisplayMessage(ddlOrigin, ddlDestination, txtStartDate, txtEndDate, rdoRoundTrip, arrPostName, txtServerDate);
+        if (ValidateState == false) {
+            if (SubmitStatus) {
+                SubmitStatus.value = true;
+            }
+            return true;
+        }
+        else {
+            if (SubmitStatus) {
+                SubmitStatus.value = false;
+            }
+            return false;
+        }
+    }
+    else {
+        //null parameter need to deicide weather message to display as Alert OR Div.
+        //If Div then change the null parameter with DIV id.
+        //Currently null is to dispaly message as Alert.
+        ShowMessage(msgDisplay);
+        if (SubmitStatus) {
+            SubmitStatus.value = false;
+        }
+        return false;
+    }
+}
+
+function ValidateBlankAirport(objectID) {
+
+    var obj = document.getElementById(objectID);
+
+    if ((obj.value == "") || (obj.value == "--Origin--") || (obj.value == "--Destination--"))
+        return false;
+    else
+        return true;
+
+}
+
+function applyClass(divNo) {
+
+    var getBottomClass = document.getElementById("ObeBottomTxtUpdate");
+    getBottomClass.className = 'ObeBottomTxt' + divNo + '';
+
+    var getClass = document.getElementById("ObeinClass" + divNo);
+    document.getElementById('ObeinClass' + divNo + '').className = '' + getClass.className + 'Act';
+
+}
+
+////////////////////////
+///  Flights Pop-up  ///
+///////////////////////
+
+function FlightsPopup(ddlOrigin, ddlDestination, ddlAdult, ddlInfant, ddlChildren, txtStartDate, txtEndDate, txtPromotion, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgPromotion, minPromotionLength, maxPromotionLength, msgOriginDestSame, arrPostName, msgPopupDateRange, txtServerDate) {
+
+    var var2 = Validate(ddlOrigin, ddlDestination, ddlAdult, ddlInfant, ddlChildren, txtStartDate, txtEndDate, txtPromotion, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgPromotion, minPromotionLength, maxPromotionLength, msgOriginDestSame, arrPostName, txtServerDate);
+    var m_names = new Array("January", "February", "March",
+                    "April", "May", "June", "July", "August", "September",
+                    "October", "November", "December");
+
+
+    var SubmitStatus = document.getElementById("SubmitState");
+    if (SubmitStatus) {
+        SubmitStatus.value = false;
+    }
+    if (var2) {
+
+        var objFromDate = document.getElementById("hidFromDate");
+        var objToDate = document.getElementById("hidToDate");
+
+        var fromDate = new Date(objFromDate.value);
+        var toDate = new Date(objToDate.value);
+
+        var objStartDate = document.getElementById(txtStartDate);
+        var objEndDate = document.getElementById(txtEndDate);
+
+        var dtStartDate = new Date(parseJetDate(objStartDate.value));
+        var dtEndDate = new Date(parseJetDate(objEndDate.value));
+
+        //alert("((" + dtStartDate + " < " + fromDate + ") || ( " + dtEndDate + " > " + toDate + "))");
+        //alert((dtStartDate < fromDate) + "||" + (dtEndDate > toDate));
+        //if ((dtStartDate > toDate) || (dtEndDate > toDate)) {
+        //By kunal on 27-Jul-2009
+        if (dtStartDate > toDate) {
+            //var toDateFormat = toDate.getDate() + "/" + eval(toDate.getMonth() + 1) + "/" + toDate.getFullYear();
+            //var fromDateFormat = fromDate.getDate() + "/" + eval(fromDate.getMonth() + 1) + "/" + fromDate.getFullYear();
+            var toDateFormat = m_names[eval(toDate.getMonth())] + ' ' + toDate.getDate() + ', ' + toDate.getFullYear();
+            var fromDateFormat = m_names[eval(fromDate.getMonth())] + ' ' + fromDate.getDate() + ', ' + fromDate.getFullYear();
+            var fromMsgDate = msgPopupDateRange.replace('#FROMDATE#', fromDateFormat);
+            var toMsgDate = fromMsgDate.replace('#TODATE#', toDateFormat);
+            //ShowMessage(msgPopupDateRange + " " + toDateFormat);
+            ShowMessage(toMsgDate);
+            if (SubmitStatus) {
+                SubmitStatus.value = false;
+            }
+            return false;
+        }
+        //Comment end by kunal
+        else {
+            if (SubmitStatus) {
+                SubmitStatus.value = true;
+            }
+            return true;
+        }
+    }
+    else {
+        if (SubmitStatus) {
+            SubmitStatus.value = false;
+        }
+        return false;
+    }
+
+}
+function showLayerForCountryHelp() {
+    var CountryHelpMessage = "Country selection helps us display fares, offers and information appropriate to the country that you select."; //document.getElementById("hdErPromoCodeHelpMessage").value;
+    alert(CountryHelpMessage);
+}
+function showLayerForDealCode() {
+    var PromoCodeHelpMessage = "A Promo Code is a unique identifier which relates to a special offer, for example, a special fare. This code is provided as part of a special promotion and will be valid for that particular offer and period only. By entering this code here you will be presented with the search results, which relate to the offer."; //document.getElementById("hdErPromoCodeHelpMessage").value;
+    alert(PromoCodeHelpMessage);
+}
+
+
+/*past searches starts NJP-1004*/
+  var finalValOri=0;
+  var finalValDest=0;
+ var indexPosOri=0;
+ var indexPosDest=0;
+
+function populateValuesOBE(stringdata,txtOriginID,txtDestID,ddlOri,ddlDest,rdoOneWay,rdoRoundTrip,rdoFixedDates,rdoFlexibleDates,rdoLowestFares,ddlAdult,ddlChildren,ddlInfant,txtEndDate,txtStartDate,txtPromotion,btnEndDateCal)
+{
+   var objEndDateCal = document.getElementById(btnEndDateCal);
+    var objEndDate = document.getElementById(txtEndDate);
+if(stringdata!="")
+{
+
+//alert(stringdata+"..."+txtOriginID);
+
+  var arr=stringdata.split(',');
+ 
+ 
+  document.getElementById(txtOriginID).value=arr[12];
+  document.getElementById(ddlOri).value=arr[7];
+  
+  document.getElementById(txtDestID).value=arr[13];
+  document.getElementById(ddlDest).value=arr[8];
+ 
+    
+  if(arr[0]=="One Way")
+  {
+    
+    document.getElementById(rdoOneWay).checked=true;
+    objEndDateCal.disabled = true;
+     objEndDate.disabled = true;
+  }
+  else if(arr[0]=="Return")
+  {
+     document.getElementById(rdoRoundTrip).checked=true;
+     objEndDateCal.disabled = false;
+     objEndDate.disabled = false;
+  }
+  
+
+   if(arr[10]=="fixed")
+   {
+     document.getElementById(rdoFixedDates).checked=true;
+   }
+   else if(arr[10]=="flexible")
+   {
+     document.getElementById(rdoFlexibleDates).checked=true;
+   }
+   else if(arr[10]=="lowest")
+   {
+     document.getElementById(rdoLowestFares).checked=true;
+   }
+   
+   
+   var dropdwnA=document.getElementById(ddlAdult).getElementsByTagName('option');
+   var dropdwnC=document.getElementById(ddlChildren).getElementsByTagName('option');
+   var dropdwnI=document.getElementById(ddlInfant).getElementsByTagName('option');
+   
+        
+       var selectedA=arr[4]-1;
+       dropdwnA[selectedA].selected=true;
+       
+        var selectedC=arr[5];
+        if(selectedC=="")
+            selectedC="0";
+       dropdwnC[selectedC].selected=true;
+       
+       var selectedI=arr[6];
+        if(selectedI=="")
+            selectedI="0";
+       dropdwnI[selectedI].selected=true;
+   
+      if(arr[1]!="" && arr[1]!=null)
+      {
+         
+         document.getElementById(txtEndDate).value=arr[1];
+      }
+      
+      document.getElementById(txtStartDate).value=arr[9];
+      
+      
+      if(arr[11]!="" && arr[11]!=null)
+      {
+        document.getElementById(txtPromotion).value=arr[11];
+      }
+      }
+      
+    else
+    {
+    //For Default selection
+        document.getElementById(txtOriginID).value="--Depart--";
+        document.getElementById(ddlOri).value="";
+        
+        document.getElementById(txtDestID).value="--Return--";
+        document.getElementById(ddlDest).value="";
+        
+         var dropdwnA=document.getElementById(ddlAdult).getElementsByTagName('option');
+         var selectedA="0";
+         dropdwnA[selectedA].selected=true;
+         
+         var dropdwnC=document.getElementById(ddlChildren).getElementsByTagName('option');
+         var selectedC="0";
+         dropdwnC[selectedC].selected=true;
+         
+         var dropdwnI=document.getElementById(ddlInfant).getElementsByTagName('option');
+         var selectedI="0";
+         dropdwnI[selectedI].selected=true;
+         
+         document.getElementById(rdoRoundTrip).checked=true;
+          objEndDateCal.disabled = false;
+          objEndDate.disabled = false;
+         document.getElementById(rdoFixedDates).checked=true;
+         document.getElementById(txtPromotion).value="Optional";
+         
+        //For Calculation CurrentDate
+        
+        var m_names = new Array("Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+
+        var d = new Date();
+        var curr_date = d.getDate();
+        var curr_month = d.getMonth();
+        var curr_year = d.getFullYear();
+       if(curr_date<10)
+        curr_date="0"+curr_date;
+        
+        document.getElementById(txtStartDate).value=curr_date+"-" + m_names[curr_month]+ "-" + curr_year;
+        //For calculatting next date
+        var currentDate = new Date();
+        var valueofcurrentDate=currentDate.valueOf()+(24*60*60* 1000);
+        var newDate =new Date(valueofcurrentDate);
+        
+        var next_date = newDate.getDate();
+        var next_month = newDate.getMonth();
+        var next_year = newDate.getFullYear();
+        if(next_date<10)
+        next_date="0"+next_date;
+        document.getElementById(txtEndDate).value=next_date+"-" + m_names[next_month]+ "-" + next_year;
+
+        
+    }
+}
+
+function populateValuesOBESearchBy(stringdata,txtOriginID,txtDestID,ddlOri,ddlDest,rdoOneWay,rdoRoundTrip,ddlSearchBy,ddlAdult,ddlChildren,ddlInfant,txtEndDate,txtStartDate,txtPromotion,btnEndDateCal,countryCode)
+{
+
+if(stringdata!="")
+{
+
+//alert(stringdata+"..."+txtOriginID);
+
+  var arr=stringdata.split(',');
+ 
+ 
+  document.getElementById(txtOriginID).value=arr[12];
+  document.getElementById(ddlOri).value=arr[7];
+  
+  document.getElementById(txtDestID).value=arr[13];
+  document.getElementById(ddlDest).value=arr[8];
+    var objEndDateCal = document.getElementById(btnEndDateCal);
+    var objEndDate = document.getElementById(txtEndDate);
+    
+  if(arr[0]=="One Way")
+  {
+    
+    document.getElementById(rdoOneWay).checked=true;
+    objEndDateCal.disabled = true;
+     objEndDate.disabled = true;
+  }
+  else if(arr[0]=="Return")
+  {
+     document.getElementById(rdoRoundTrip).checked=true;
+     objEndDateCal.disabled = false;
+     objEndDate.disabled = false;
+  }
+  
+    
+    document.getElementById(ddlSearchBy).value=arr[10];
+       
+   
+   var dropdwnA=document.getElementById(ddlAdult).getElementsByTagName('option');
+   var dropdwnC=document.getElementById(ddlChildren).getElementsByTagName('option');
+   var dropdwnI=document.getElementById(ddlInfant).getElementsByTagName('option');
+   
+        
+       var selectedA=arr[4]-1;
+       dropdwnA[selectedA].selected=true;
+       
+        var selectedC=arr[5];
+        if(selectedC=="")
+            selectedC="0";
+       dropdwnC[selectedC].selected=true;
+       
+       var selectedI=arr[6];
+        if(selectedI=="")
+            selectedI="0";
+       dropdwnI[selectedI].selected=true;
+   
+      if(arr[1]!="" && arr[1]!=null)
+      {
+         
+         document.getElementById(txtEndDate).value=arr[1];
+      }
+      
+      document.getElementById(txtStartDate).value=arr[9];
+      
+      
+      if(arr[11]!="" && arr[11]!=null)
+      {
+        document.getElementById(txtPromotion).value=arr[11];
+      }
+      }
+      
+    else
+    {
+    //For Default selection
+        document.getElementById(txtOriginID).value="--Depart--";
+        document.getElementById(ddlOri).value="";
+        
+        document.getElementById(txtDestID).value="--Return--";
+        document.getElementById(ddlDest).value="";
+        
+         var dropdwnA=document.getElementById(ddlAdult).getElementsByTagName('option');
+         var selectedA="0";
+         dropdwnA[selectedA].selected=true;
+         
+         var dropdwnC=document.getElementById(ddlChildren).getElementsByTagName('option');
+         var selectedC="0";
+         dropdwnC[selectedC].selected=true;
+         
+         var dropdwnI=document.getElementById(ddlInfant).getElementsByTagName('option');
+         var selectedI="0";
+         dropdwnI[selectedI].selected=true;
+         
+         document.getElementById(rdoRoundTrip).checked=true;
+         //document.getElementById(rdoFixedDates).checked=true;
+         document.getElementById(ddlSearchBy).value="fixed";
+         document.getElementById(txtPromotion).value="Optional";
+         
+        //For Calculation CurrentDate
+        
+        var m_names = new Array("Jan", "Feb", "Mar","Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+
+        var d = new Date();
+        var valueofcurrent_Date;
+        var n_valueofcurrent_Date;
+        var valueofnextDate;
+        var newNextDate;
+        
+        if(countryCode!="IN")
+        {
+            valueofcurrent_Date=d.valueOf()+((24*60*60* 1000)*7);
+            n_valueofcurrent_Date=new Date(valueofcurrent_Date);
+            //alert("check"+n_valueofcurrent_Date.getDate());
+       
+            //For calculatting next date
+        
+            valueofnextDate=d.valueOf()+((24*60*60* 1000)*14);
+            newNextDate =new Date(valueofnextDate);
+
+        }
+        else
+        {
+            n_valueofcurrent_Date=d;
+            //For calculatting next date
+            valueofnextDate=d.valueOf()+(24*60*60* 1000);
+            newNextDate =new Date(valueofnextDate);
+        }
+        var curr_date = n_valueofcurrent_Date.getDate();
+        var curr_month = n_valueofcurrent_Date.getMonth();
+        var curr_year = n_valueofcurrent_Date.getFullYear();
+        
+        
+       if(curr_date<10)
+        curr_date="0"+curr_date;
+        
+        document.getElementById(txtStartDate).value=curr_date+"-" + m_names[curr_month]+ "-" + curr_year;
+        
+        
+        var next_date = newNextDate.getDate();
+        var next_month = newNextDate.getMonth();
+        var next_year = newNextDate.getFullYear();
+        if(next_date<10)
+        next_date="0"+next_date;
+        document.getElementById(txtEndDate).value=next_date+"-" + m_names[next_month]+ "-" + next_year;
+
+        
+    }
+}
+
+
+
+/*past seraches end*/
+function ValidateClaimMissingMiles(txtBookingReference, ddlAirlineCode, txtFlightNo, txtFlightDate, ddlOrigin, ddlDestination, ddlBookingClass, msgBlankBookingReference, msgIncorrectBookingReference, msgBlankAirlineCodeSelect, msgBlankFlightNumber, msgBlankFlightDate, msgBlankOrigin, msgBlankDestination, msgOriginDestSame, msgBlankBookingClass) {
+    var retValue;
+    var msgDisplay;
+
+    var objtxtBookingReference = document.getElementById(txtBookingReference);
+    
+
+    retValue = true;
+    msgDisplay = "";
+
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(txtBookingReference) ? "" : msgBlankBookingReference) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (CheckPNRLength(objtxtBookingReference.value) ? "" : msgIncorrectBookingReference) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlAirlineCode) ? "" : msgBlankAirlineCodeSelect) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(txtFlightNo) ? "" : msgBlankFlightNumber) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(txtFlightDate) ? "" : msgBlankFlightDate) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlOrigin) ? "" : msgBlankOrigin) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlDestination) ? "" : msgBlankDestination) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateOriginDest(ddlOrigin, ddlDestination) ? "" : msgOriginDestSame) : msgDisplay;
+    msgDisplay = (msgDisplay == "") ? (ValidateBlank(ddlBookingClass) ? "" : msgBlankBookingClass) : msgDisplay;
+
+ 
+  
+
+    var SubmitStatus = document.getElementById("SubmitState");
+
+    if (msgDisplay == "") {
+        if (SubmitStatus) {
+            SubmitStatus.value = true;
+        }
+        return true;
+    }
+    else {
+        //null parameter need to deicide weather message to display as Alert OR Div.
+        //If Div then change the null parameter with DIV id.
+        //Currently null is to dispaly message as Alert.
+        ShowMessage(msgDisplay);
+        if (SubmitStatus) {
+            SubmitStatus.value = false;
+        }
+        return false;
+    }
+}
+//NJP-2956
+function SetReturnPromo(rdOneWay, promoMessage, hdnIsOneWaySelected, rdoRoundTrip, btnEndDateCal, txtEndDate, autoBoxDestination, autoBoxOrigin, IsReturnPromoAvailable, hdnPromoAccepted) {
+    $('#' + rdoRoundTrip).click(function() {
+        var isPromoAccepted = $('#' + hdnPromoAccepted).val();
+        if (IsReturnPromoAvailable == "true" && isPromoAccepted == "true") {
+            $('#' + hdnIsOneWaySelected).val('true');
+        }
+        RoundOrOneWay(rdoRoundTrip, btnEndDateCal, txtEndDate, autoBoxDestination, autoBoxOrigin, rdoOneWay);
+    });
+}
+
+
+function FlightsPopupAPF(ddlOrigin, ddlDestination, ddlAdult, ddlInfant, ddlChildren, txtStartDate, txtEndDate, txtPromotion, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgPromotion, minPromotionLength, maxPromotionLength, msgOriginDestSame, arrPostName, msgPopupDateRange, txtServerDate) {
+
+    var var2 = Validate(ddlOrigin, ddlDestination, ddlAdult, ddlInfant, ddlChildren, txtStartDate, txtEndDate, txtPromotion, rdoRoundTrip, msgOrigin, msgDestination, msgInfantChildCompare, msgDateCompare, msgTotalSeats, maxSeats, msgPromotion, minPromotionLength, maxPromotionLength, msgOriginDestSame, arrPostName, txtServerDate);
+    var m_names = new Array("January", "February", "March",
+                    "April", "May", "June", "July", "August", "September",
+                    "October", "November", "December");
+
+
+    var SubmitStatus = document.getElementById("SubmitState");
+    if (SubmitStatus) {
+        SubmitStatus.value = false;
+    }
+    if (var2) {
+
+        var objFromDate = document.getElementById("hidFromDate");
+        var objToDate = document.getElementById("hidToDate");
+
+        var fromDate = new Date(objFromDate.value);
+        var toDate = new Date(objToDate.value);
+
+        var objStartDate = document.getElementById(txtStartDate);
+        var objEndDate = document.getElementById(txtEndDate);
+
+        var dtStartDate = new Date(parseJetDate(objStartDate.value));
+        var dtEndDate = new Date(parseJetDate(objEndDate.value));
+
+        //alert("((" + dtStartDate + " < " + fromDate + ") || ( " + dtEndDate + " > " + toDate + "))");
+        //alert((dtStartDate < fromDate) + "||" + (dtEndDate > toDate));
+        //if ((dtStartDate > toDate) || (dtEndDate > toDate)) {
+
+        //By kunal on 27-Jul-2009
+        if (dtStartDate > toDate) {
+            //var toDateFormat = toDate.getDate() + "/" + eval(toDate.getMonth() + 1) + "/" + toDate.getFullYear();
+            //var fromDateFormat = fromDate.getDate() + "/" + eval(fromDate.getMonth() + 1) + "/" + fromDate.getFullYear();
+            var toDateFormat = m_names[eval(toDate.getMonth())] + ' ' + toDate.getDate() + ', ' + toDate.getFullYear();
+            var fromDateFormat = m_names[eval(fromDate.getMonth())] + ' ' + fromDate.getDate() + ', ' + fromDate.getFullYear();
+            var fromMsgDate = msgPopupDateRange.replace('#FROMDATE#', fromDateFormat);
+            var toMsgDate = fromMsgDate.replace('#TODATE#', toDateFormat);
+            //ShowMessage(msgPopupDateRange + " " + toDateFormat);
+            ShowMessage(toMsgDate);
+            if (SubmitStatus) {
+                SubmitStatus.value = false;
+            }
+            return false;
+        }
+        //Comment end by kunal
+        else {
+            if (SubmitStatus) {
+                SubmitStatus.value = true;
+            }
+            return true;
+        }
+    }
+    else {
+        if (SubmitStatus) {
+            SubmitStatus.value = false;
+        }
+        return false;
+    }
+
+}
+áïj¼^ñ      TUmöTUmö:ý¸ÄTV½   0:https://https.jetairways.com/Scripts/Obe/Obe.js security-info FnhllAKWRHGAlo+ESXykKAAAAAAAAAAAwAAAAAAAAEaphjojKOpF0qJaNXyu+n+CAAQAAgAAAAAAAAAAAAAAACw4N6+LhUposNgK7YiYWzI/H82DxalM0aJQdnbKfH40ZgoyJpFcT/u7IImFpjLfBfjtg2TO2UxuhrpIr1PDk+YAAAAAAAAEKjCCBCYwggMOoAMCAQICDgIAAAAAAUVvfQgqt5S/MA0GCSqGSIb3DQEBBQUAMEYxFzAVBgNVBAoTDkN5YmVydHJ1c3QgSW5jMSswKQYDVQQDEyJDeWJlcnRydXN0IFB1YmxpYyBTdXJlU2VydmVyIFNWIENBMB4XDTE0MDQxNzExNDAzOFoXDTE1MDQxNzExNDAzOFowgYUxCzAJBgNVBAYTAklOMRQwEgYDVQQIEwtNYWhhcmFzaHRyYTEPMA0GA1UEBxMGTXVtYmFpMSAwHgYDVQQKExdKZXQgQWlyd2F5cyAoSW5kaWEpIEx0ZDESMBAGA1UECxMJZUNvbW1lcmNlMRkwFwYDVQQDFBAqLmpldGFpcndheXMuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqhHDspu4SJlyPFjjEKIsAUddS3ya4n+zmjdOgwDRV9GKS6htqp165O4V5idQgTKJB2NyOsGoBhew259zTZ4KT145cNb4vXEO91YfUwJje5lpPxVTH73hvGSpnB8mKndew3HS3tCw0GZH6FrupR2EK9HMekBKBBnSdLq5ytfkhm3S2Vw/UUMoLtRz7Cu/GGWEObGiqKQ3BFuMOJ+T01B1XbsZTQJmENksduxGzp0clY4QE1yDdGGKJb8/wD6PoD6pvHDNHciCkAMzUwGLyUxfDE0AEFqfOPQOoERV9SAxazwPGlkJGagpxbwtn2yg/fyc52Z3Xl+p3sDaVuGMZHkq+QIDAQABo4HRMIHOMB8GA1UdIwQYMBaAFASYYN+AG5ZJXWVWLaUsCSQK7Ny5MD8GA1UdHwQ4MDYwNKAyoDCGLmh0dHA6Ly9jcmwub21uaXJvb3QuY29tL1B1YmxpY1N1cmVTZXJ2ZXJTVi5jcmwwHQYDVR0OBBYEFFtjKIBe3PMh+BpziooDijS/GnT5MAkGA1UdEwQCMAAwDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjARBglghkgBhvhCAQEEBAMCBsAwDQYJKoZIhvcNAQEFBQADggEBAExdINorM3qWEBejkdhD2i1GID2tB1TJ+1zzTTTwie7QmHEBdROq+gjhapWJfodiaAXcqDX16HLxxeV6AtjgaB7u8KHpIcrgQ+HJHgy9fd3ysOOjAzF+F56pRn/JBbPLGSek6kD8UBRq+PjLOtouVD76c/tdLMp/X5/hpBSQZCiyvsUXsFCo0EKrpDttvkDEPzBO6i87b9u12tzu4x+KRJRtPFfqqLJKpVjTtqV+ddzW1IziV7q37D1FsYkzWsxE0+b/LhxPBisdaA3TEfrqor5qy30vOTix1qP1LvQHY5RXecM5MLlpLeqm4LRubIZFWn0sQRVZtQDdnORbRf4tH6MAAAEAAAABAAAAABxUTFNfUlNBX1dJVEhfQUVTXzI1Nl9DQkNfU0hBAAAAAQA= request-method GET response-head HTTP/1.1 200 OK
+Content-Type: application/javascript
+Last-Modified: Thu, 20 Mar 2014 05:42:16 GMT
+Accept-Ranges: bytes
+Etag: "331dc926ff43cf1:0"
+Server: Microsoft-IIS/8.5
+X-Powered-By: ASP.NET
+Content-Length: 66200
+front-end-https: on
+Cache-Control: max-age=86400
+Date: Sat, 01 Nov 2014 23:23:45 GMT
+ uncompressed-len 0  ˜
