@@ -93,5 +93,6 @@ while True:
   except Exception as e:
     print "Exception while processing message!"
     traceback.print_exc()
+    queue.delete_message(msg)
   else:
     queue.delete_message(msg)
